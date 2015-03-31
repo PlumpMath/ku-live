@@ -61,16 +61,18 @@
 
 (defn matches-query?
   [search-input class]
-  (if (= "" search-input)
-    true
-    (boolean
-     (or (re-find (re-pattern search-input) (s/lower-case (:name class)))
-         (re-find (re-pattern search-input) (s/lower-case (:number class)))
-         (re-find (re-pattern search-input) (s/lower-case (:time class)))
-         (re-find (re-pattern search-input) (s/lower-case (:credits class)))
-         (re-find (re-pattern search-input) (s/lower-case (:name class)))
-         (re-find (re-pattern search-input) (s/lower-case (:type class)))
-         ))))
+  (let [lc s/lower-case
+        match-input-to-key (fn [key] (re-find (re-pattern (lc search-input))
+                                              (lc (key class))))]
+    (if (= "" search-input)
+      true
+      (boolean (or (match-input-to-key :name)
+                   (match-input-to-key :number)
+                   (match-input-to-key :time)
+                   (match-input-to-key :credits)
+                   (match-input-to-key :name)
+                   (match-input-to-key :type)
+                   )))))
 
 (defn classes-component
   []
