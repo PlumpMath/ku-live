@@ -1,17 +1,16 @@
 (ns kulive.core
   (:require [reagent.core :as reagent :refer [atom]]
+            [re-frame.core :as re-frame]
             [reagent.session :as session]
             [secretary.core :as secretary :include-macros true]
             [goog.events :as events]
             [goog.history.EventType :as EventType]
             [cljsjs.react :as react]
-            [re-frame.core :as re-frame]
             [clojure.string :as s])
   (:require-macros [reagent.ratom  :refer [reaction]])
   (:import goog.History))
 
-;; -------------------------
-;; Subscriptions & handlers
+;; Subscriptions & handlers -------------------------
 
 (re-frame/register-sub
  :search-input
@@ -21,12 +20,12 @@
 (re-frame/register-sub
  :classes
  (fn [db]
-   (reaction (:classes @db)))) ;; pulls out :classes
+   (reaction (:classes @db))))
 
 (re-frame/register-handler
- :initialise-db ;; usage: (dispatch [:initialise-db])
+ :initialise-db
  (fn
-   [_ _] ;; Ignore both params (db and v).
+   [_ _]
    {:classes [{:name "Beginner CSS" :number "CSS101" :time "Mon(2) Wed(2)"
                :credits "3" :type "Elective" :prof "Prof. A"}
               {:name "Intermediate CSS" :number "CSS201" :time "Tue(5) Thu(5)"
@@ -49,23 +48,22 @@
  :search-input-entered
  handle-search-input-entered)
 
-;; -------------------------
-;; Views
+;; Views -------------------------
 
 (defn matches-query?
   [search-input class]
-  (let [lc s/lower-case
-        match-input-to-key (fn [key] (re-find (re-pattern (lc search-input))
-                                              (lc (key class))))]
+  (let [matches-input? (fn [key]
+                         (re-find (re-pattern (s/lower-case search-input))
+                                  (s/lower-case (key class))))]
     (if (= "" search-input)
       true
-      (boolean (or (match-input-to-key :name)
-                   (match-input-to-key :number)
-                   (match-input-to-key :time)
-                   (match-input-to-key :credits)
-                   (match-input-to-key :prof)
-                   (match-input-to-key :type)
-                   )))))
+      (or (matches-input? :name)
+          (matches-input? :number)
+          (matches-input? :prof)
+          (matches-input? :time)
+          (matches-input? :credits)
+          (matches-input? :type)
+          ))))
 
 (defn search-component
   []
@@ -102,17 +100,18 @@
   [:div
    [:h2 "KU Live"]
    [search-component]
-   [classes-component]])
+   [classes-component]
+   [:div [:a {:href "#/about"} "about"]]])
 
 (defn about-page []
-  [:div [:h2 "About kulive"]
-   [:div [:a {:href "#/"} "go to the home page"]]])
+  [:div [:h2 "About"]
+   [:div [:a {:href "#/"} "home"]]])
 
 (defn current-page []
   [:div [(session/get :current-page)]])
 
-;; -------------------------
-;; Routes
+;; Routes -------------------------
+
 (secretary/set-config! :prefix "#")
 
 (secretary/defroute "/" []
@@ -121,8 +120,8 @@
 (secretary/defroute "/about" []
   (session/put! :current-page #'about-page))
 
-;; -------------------------
-;; History ;; must be called after routes have been defined
+;; History -------------------------
+
 (defn hook-browser-navigation! []
   (doto (History.)
     (events/listen
@@ -131,11 +130,8 @@
        (secretary/dispatch! (.-token event))))
     (.setEnabled true)))
 
-;; -------------------------
-;; Initialize app
-(defn mount-root []
-  (reagent/render [current-page] (.getElementById js/document "app")))
+;; Initialize app -------------------------
 
 (defn init! [] (hook-browser-navigation!)
   (re-frame/dispatch [:initialise-db])
-  (mount-root))
+  (reagent/render [current-page] (.getElementById js/document "app")))
