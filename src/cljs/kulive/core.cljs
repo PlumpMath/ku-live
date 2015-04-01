@@ -28,18 +28,17 @@
  (fn
    [_ _] ;; Ignore both params (db and v).
    {:classes [{:name "Beginner CSS" :number "CSS101" :time "Mon(2) Wed(2)"
-               :credits "3" :type "Elective"}
+               :credits "3" :type "Elective" :prof "Prof. A"}
               {:name "Intermediate CSS" :number "CSS201" :time "Tue(5) Thu(5)"
-               :credits "3" :type "Elective"}
+               :credits "3" :type "Elective" :prof "Prof. B"}
               {:name "Advanced Javascript" :number "JS406" :time "Mon(6) Wed(6)"
-               :credits "3" :type "Major"}
+               :credits "3" :type "Major" :prof "Prof. C"}
               {:name "ClojureScript" :number "CLJS303" :time "Fri(1,2)"
-               :credits "3" :type "Major"}
+               :credits "3" :type "Major" :prof "Prof. D"}
               {:name "Clojure" :number "CLJ505" :time "Tue(3,4) Thu(3,4)"
-               :credits "3" :type "Major"}
-              {:name "How to Train Your Dragon" :number "Drag505"
-               :time "Tue(7) Thu(7)" :credits "3" :type "Elective"}
-              ]
+               :credits "3" :type "Major" :prof "Prof. D"}
+              {:name "How to Train Your Dragon" :number "DR505" :prof "Prof. E"
+               :time "Tue(7) Thu(7)" :credits "3" :type "Elective"}]
     :search-input ""}))
 
 (defn handle-search-input-entered
@@ -53,12 +52,6 @@
 ;; -------------------------
 ;; Views
 
-(defn class-component
-  "Individual class in search result list"
-  [class]
-  [:li.list-group-item (:name class)
-   [:span (:number class)] [:span (:time class)] [:span (:credits class) (:type class)]])
-
 (defn matches-query?
   [search-input class]
   (let [lc s/lower-case
@@ -70,34 +63,44 @@
                    (match-input-to-key :number)
                    (match-input-to-key :time)
                    (match-input-to-key :credits)
-                   (match-input-to-key :name)
+                   (match-input-to-key :prof)
                    (match-input-to-key :type)
                    )))))
+
+(defn search-component
+  []
+  (let [search-input (re-frame/subscribe [:search-input])]
+    (fn []
+      [:div
+       [:div "Search for class, professor, date..."]
+       [:input
+        {:on-change #(re-frame/dispatch
+                      [:search-input-entered (-> % .-target .-value)])
+         :placeholder ""}]])))
+
+(defn class-component
+  "Individual class in search result list"
+  [class]
+  [:li [:a (interpose ", " [(:name class)
+                            (:number class)
+                            (:prof class)
+                            (:time class)
+                            (:credits class)
+                            (:type class)])]])
 
 (defn classes-component
   []
   (let [classes (re-frame/subscribe [:classes])
         search-input (re-frame/subscribe [:search-input])]
     (fn []
-      [:div.panel.panel-default
-       [:div.panel-heading [:h3.panel-title "Search Results"]]
-       [:ul.list-group
+      [:div
+       [:ul
         (for [class (filter (partial matches-query? @search-input) @classes)]
           ^{:key (:number class)} [class-component class])]])))
 
-(defn search-component
-  []
-  (let [search-input (re-frame/subscribe [:search-input])]
-    (fn []
-      [:div.t-center ;; Wrapper for search
-       [:h3.panel-title "KU Live"
-        [:input.main-search
-         {:on-change #(re-frame/dispatch
-                       [:search-input-entered (-> % .-target .-value)])
-          :placeholder "Search for class, professor, etc..."}]]])))
-
 (defn home-page []
   [:div
+   [:h2 "KU Live"]
    [search-component]
    [classes-component]])
 
@@ -133,7 +136,6 @@
 (defn mount-root []
   (reagent/render [current-page] (.getElementById js/document "app")))
 
-(defn init! []
-  (hook-browser-navigation!)
+(defn init! [] (hook-browser-navigation!)
   (re-frame/dispatch [:initialise-db])
   (mount-root))
