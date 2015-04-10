@@ -23,13 +23,9 @@
   :plugins [[lein-cljsbuild "1.0.4"]
             [lein-environ "1.0.0"]
             [lein-ancient "0.6.6"]
-            [lein-ring "0.9.1"]
             [lein-asset-minifier "0.2.2"]]
 
   :source-paths ["src/clj" "src/cljs"]
-
-  :ring {:handler kulive.handler/app
-         :uberwar-name "kulive.war"}
 
   :min-lein-version "2.5.0"
 
