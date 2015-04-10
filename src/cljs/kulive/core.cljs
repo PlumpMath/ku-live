@@ -61,21 +61,6 @@
 
 ;; Views -------------------------
 
-(defn matches-query?
-  [search-input course]
-  (let [matches-input? (fn [key]
-                         (re-find (re-pattern (string/lower-case search-input))
-                                  (string/lower-case (apply str (val course)))))]
-    (if (= "" search-input)
-      true
-      (or (matches-input? :name)
-          (matches-input? :number)
-          (matches-input? :prof)
-          (matches-input? :time)
-          (matches-input? :credits)
-          (matches-input? :type)
-          ))))
-
 (defn search-component
   []
   (let [search-input (re-frame/subscribe [:search-input])]
@@ -90,6 +75,27 @@
            :on-change #(re-frame/dispatch
                         [:search-input-entered (-> % .-target .-value)])
            :placeholder "Course ID, Title, Professor, etc..."}]]]])))
+
+(defn matches-query?
+  [search-input course]
+  (let [matches-input? (fn [key]
+                         (or (re-find
+                              (re-pattern (string/lower-case search-input))
+                              (string/lower-case (apply str (val course))))
+                             (re-find
+                              (re-pattern (string/lower-case
+                                           (apply str (butlast search-input))))
+                              (string/lower-case (apply str (val course))))
+                             ))]
+    (if (= "" search-input)
+      true
+      (or (matches-input? :name)
+          (matches-input? :number)
+          (matches-input? :prof)
+          (matches-input? :time)
+          (matches-input? :credits)
+          (matches-input? :type)
+          ))))
 
 (defn course-component
   "Individual course in search result list"
