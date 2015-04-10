@@ -8,20 +8,21 @@
                  [ring-server "0.4.0"]
                  [cljsjs/react "0.13.1-0"]
                  [reagent "0.5.0"]
-                 [reagent-forms "0.4.6"]
+                 [reagent-forms "0.5.0"]
                  [reagent-utils "0.1.4"]
-                 [org.clojure/clojurescript "0.0-3126" :scope "provided"]
+                 [org.clojure/clojurescript "0.0-3191" :scope "provided"]
                  [ring "1.3.2"]
                  [ring/ring-defaults "0.1.4"]
                  [prone "0.8.1"]
-                 [compojure "1.3.2"]
+                 [compojure "1.3.3"]
                  [selmer "0.8.2"]
                  [environ "1.0.0"]
-                 [secretary "1.2.2"]
+                 [secretary "1.2.3"]
                  [re-frame "0.2.0"]]
 
   :plugins [[lein-cljsbuild "1.0.4"]
             [lein-environ "1.0.0"]
+            [lein-ancient "0.6.6"]
             [lein-ring "0.9.1"]
             [lein-asset-minifier "0.2.2"]]
 
@@ -38,10 +39,12 @@
 
   :clean-targets ^{:protect false} ["resources/public/js"]
 
+  ;; TODO: later before production we should minify averything in one big css
   :minify-assets
   {:assets
    {"resources/public/css/skeleton.min.css" "resources/public/css/skeleton.css"
-    "resources/public/css/normalize.min.css" "resources/public/css/normalize.css" "resources/public/css/site.min.css" "resources/public/css/site.css"}}
+    "resources/public/css/normalize.min.css" "resources/public/css/normalize.css"
+    "resources/public/css/site.min.css" "resources/public/css/site.css"}}
 
   :cljsbuild {:builds {:app {:source-paths ["src/cljs"]
                              :compiler {:output-to     "resources/public/js/app.js"
@@ -58,7 +61,7 @@
                                   [leiningen "2.5.1"]
                                   [figwheel "0.2.5"]
                                   [weasel "0.6.0"]
-                                  [com.cemerick/piggieback "0.1.6-SNAPSHOT"]
+                                  [com.cemerick/piggieback "0.2.0"]
                                   [pjstadig/humane-test-output "0.7.0"]]
 
                    :source-paths ["env/dev/clj"]
