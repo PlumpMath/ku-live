@@ -208,6 +208,10 @@
 
 ;; Initialise app -------------------------
 
-(defn init! [] (hook-browser-navigation!)
-  (re-frame/dispatch [:initialise-db])
+(defn mount-root []
   (reagent/render [current-page] (.getElementById js/document "app")))
+
+(defn init! []
+  (hook-browser-navigation!)
+  (re-frame/dispatch [:initialise-db])
+  (mount-root))
