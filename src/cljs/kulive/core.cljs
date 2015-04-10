@@ -188,5 +188,5 @@
 
 (defn init! []
   (hook-browser-navigation!)
-  (re-frame/dispatch [:initialise-db])
+  (re-frame/dispatch-sync [:initialise-db])
   (mount-root))
