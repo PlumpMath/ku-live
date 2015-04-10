@@ -13,3 +13,4 @@ pom.xml.asc
 /figwheel_server.log
 /figwheel_server.log
 /system.properties
+.DS_Store
