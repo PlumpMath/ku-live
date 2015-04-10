@@ -72,7 +72,7 @@
   []
   (let [search-input (re-frame/subscribe [:search-input])]
     (fn []
-      [:form
+      [:form {:style {:margin-bottom "1rem"}}
        [:div.row
         [:div {:class "six columns"}
          [:label {:for "search-courses"} "Course Search"]
@@ -120,14 +120,13 @@
         search-input (re-frame/subscribe [:search-input])]
     (fn []
       [:table.u-full-width
-       [:thead
-        [:tr
-         [:th "Name"]
-         [:th "Number"]
-         [:th "Professor"]
-         [:th "Time"]
-         [:th "Credits"]
-         [:th "Type"]]]
+       [:thead [:tr
+                [:th "Name"]
+                [:th "ID"]
+                [:th "Professor"]
+                [:th "Schedule"]
+                [:th "Credits"]
+                [:th "Type"]]]
        [:tbody
         (for [course (filter (partial matches-query? @search-input) @courses)]
           ^{:key (:number course)} [course-row-component course])]])))
@@ -137,16 +136,33 @@
   [course-ids]
   (let [courses (re-frame/subscribe [:courses])
         get-time (fn [cid] (get-in courses [cid :en :schedule]))]
-    ))
+    (fn []
+      [:h4 "Class Schedule"
+       [:table.u-full-width
+        [:thead
+         [:tr
+          [:th] [:th "Mon"] [:th "Tue"] [:th "Wed"] [:th "Thu"] [:th "Fri"]]]
+        [:tbody
+         (for [time-slot (range 1 8)]
+           [:tr
+            [:th time-slot]
+            [:td ""]
+            [:td ""]
+            [:td ""]
+            [:td ""]
+            [:td ""]
+            ])]]])))
 
 (defn home-page []
   [:div.container
    [:div.row
-    [:div {:course "nine column" :style {:margin-top "5%"}}
+    [:div {:course "nine column" :style {:margin-top "2%"
+                                         :margin-bottom "5%"}}
      [:h2 "KU Live"]
      [search-component]
-     [courses-table-component]
+     ;; [courses-table-component]
      [courses-component]
+     [timetable-component]
      [:div.row [:a {:href "#/about"} "about"]]]]])
 
 (defn about-page []
@@ -175,7 +191,7 @@
        (secretary/dispatch! (.-token event))))
     (.setEnabled true)))
 
-;; Initialize app -------------------------
+;; Initialise app -------------------------
 
 (defn init! [] (hook-browser-navigation!)
   (re-frame/dispatch [:initialise-db])
