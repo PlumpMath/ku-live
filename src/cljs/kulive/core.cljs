@@ -72,12 +72,16 @@
   []
   (let [search-input (re-frame/subscribe [:search-input])]
     (fn []
-      [:div
-       [:div "Search for course, professor, date..."]
-       [:input
-        {:on-change #(re-frame/dispatch
-                      [:search-input-entered (-> % .-target .-value)])
-         :placeholder ""}]])))
+      [:form
+       [:div.row
+        [:div {:class "six columns"}
+         [:label {:for "search-courses"} "Course Search"]
+         [:input.u-full-width
+          {:id "search-courses"
+           :type "search"
+           :on-change #(re-frame/dispatch
+                        [:search-input-entered (-> % .-target .-value)])
+           :placeholder "Course ID, Professor name, etc..."}]]]])))
 
 (defn course-component
   "Individual course in search result list"
@@ -94,25 +98,56 @@
   (let [courses (re-frame/subscribe [:courses])
         search-input (re-frame/subscribe [:search-input])]
     (fn []
-      [:div
-       [:ul
+      [:div.row
+       [:div {:class "u-full-width"}
+        [:ul
+         (for [course (filter (partial matches-query? @search-input) @courses)]
+           ^{:key (:number course)} [course-component course])]]])))
+
+(defn course-row-component
+  [course]
+  [:tr
+   [:td (:name course)]
+   [:td (:number course)]
+   [:td (:prof course)]
+   [:td (:time course)]
+   [:td (:credits course)]
+   [:td (:type course)]])
+
+(defn courses-table-component
+  []
+  (let [courses (re-frame/subscribe [:courses])
+        search-input (re-frame/subscribe [:search-input])]
+    (fn []
+      [:table.u-full-width
+       [:thead
+        [:tr
+         [:th "Name"]
+         [:th "Number"]
+         [:th "Professor"]
+         [:th "Time"]
+         [:th "Credits"]
+         [:th "Type"]]]
+       [:tbody
         (for [course (filter (partial matches-query? @search-input) @courses)]
-          ^{:key (:number course)} [course-component course])]])))
+          ^{:key (:number course)} [course-row-component course])]])))
 
 (defn timetable-component
   "take a list of courses, get their times, put into timetable"
   [course-ids]
-  (let [get-time (fn [cid] (get-in app-state))]))
+  (let [courses (re-frame/subscribe [:courses])
+        get-time (fn [cid] (get-in courses [cid :en :schedule]))]
+    ))
 
 (defn home-page []
   [:div.container
    [:div.row
-    [:div {:course "six column"
-           :style {:margin-top "10%"}}
+    [:div {:course "nine column" :style {:margin-top "5%"}}
      [:h2 "KU Live"]
      [search-component]
+     [courses-table-component]
      [courses-component]
-     [:div [:a {:href "#/about"} "about"]]]]])
+     [:div.row [:a {:href "#/about"} "about"]]]]])
 
 (defn about-page []
   [:div [:a {:href "#/"} "home"]])
