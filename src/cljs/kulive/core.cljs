@@ -18,15 +18,18 @@
    (reaction (:search-input @db))))
 
 (re-frame/register-sub
- :classes
+ :courses
  (fn [db]
-   (reaction (:classes @db))))
+   (reaction (:courses @db))))
+
+#_(def db
+    (clojure.edn/read-string (slurp "resources/db/db2015-1R.edn")))
 
 (re-frame/register-handler
  :initialise-db
  (fn
    [_ _]
-   {:classes [{:name "Beginner CSS" :number "CSS101" :time "Mon(2) Wed(2)"
+   {:courses [{:name "Beginner CSS" :number "CSS101" :time "Mon(2) Wed(2)"
                :credits "3" :type "Elective" :prof "Prof. A"}
               {:name "Intermediate CSS" :number "CSS201" :time "Tue(5) Thu(5)"
                :credits "3" :type "Elective" :prof "Prof. B"}
@@ -51,10 +54,10 @@
 ;; Views -------------------------
 
 (defn matches-query?
-  [search-input class]
+  [search-input course]
   (let [matches-input? (fn [key]
                          (re-find (re-pattern (s/lower-case search-input))
-                                  (s/lower-case (key class))))]
+                                  (s/lower-case (key course))))]
     (if (= "" search-input)
       true
       (or (matches-input? :name)
@@ -70,42 +73,49 @@
   (let [search-input (re-frame/subscribe [:search-input])]
     (fn []
       [:div
-       [:div "Search for class, professor, date..."]
+       [:div "Search for course, professor, date..."]
        [:input
         {:on-change #(re-frame/dispatch
                       [:search-input-entered (-> % .-target .-value)])
          :placeholder ""}]])))
 
-(defn class-component
-  "Individual class in search result list"
-  [class]
-  [:li [:a (interpose ", " [(:name class)
-                            (:number class)
-                            (:prof class)
-                            (:time class)
-                            (:credits class)
-                            (:type class)])]])
+(defn course-component
+  "Individual course in search result list"
+  [course]
+  [:li [:a (interpose ", " [(:name course)
+                            (:number course)
+                            (:prof course)
+                            (:time course)
+                            (:credits course)
+                            (:type course)])]])
 
-(defn classes-component
+(defn courses-component
   []
-  (let [classes (re-frame/subscribe [:classes])
+  (let [courses (re-frame/subscribe [:courses])
         search-input (re-frame/subscribe [:search-input])]
     (fn []
       [:div
        [:ul
-        (for [class (filter (partial matches-query? @search-input) @classes)]
-          ^{:key (:number class)} [class-component class])]])))
+        (for [course (filter (partial matches-query? @search-input) @courses)]
+          ^{:key (:number course)} [course-component course])]])))
+
+(defn timetable-component
+  "take a list of courses, get their times, put into timetable"
+  [course-ids]
+  (let [get-time (fn [cid] (get-in app-state))]))
 
 (defn home-page []
-  [:div
-   [:h2 "KU Live"]
-   [search-component]
-   [classes-component]
-   [:div [:a {:href "#/about"} "about"]]])
+  [:div.container
+   [:div.row
+    [:div {:course "six column"
+           :style {:margin-top "10%"}}
+     [:h2 "KU Live"]
+     [search-component]
+     [courses-component]
+     [:div [:a {:href "#/about"} "about"]]]]])
 
 (defn about-page []
-  [:div [:h2 "About"]
-   [:div [:a {:href "#/"} "home"]]])
+  [:div [:a {:href "#/"} "home"]])
 
 (defn current-page []
   [:div [(session/get :current-page)]])

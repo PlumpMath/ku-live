@@ -2,9 +2,11 @@
   <head>
     <meta charset="utf-8">
     {% if dev %}
-    {% style "css/site.css" %}
+    {% style "css/normalize.css" %}
+    {% style "css/skeleton.css" %}
     {% else %}
-    {% style "css/site.min.css" %}
+    {% style "css/normalize.min.css" %}
+    {% style "css/skeleton.min.css" %}
     {% endif %}
   </head>
   <body>
