@@ -14,12 +14,13 @@
 
 (defn search-component
   []
-  (let [search-input (re-frame/subscribe [:search-input])]
+  (let [search-input (re-frame/subscribe [:search-input])
+        course-count (re-frame/subscribe [:count-courses-in-search])]
     (fn []
       [:form {:style {:margin-bottom "1rem"}}
        [:div.row
         [:div {:class "five columns"}
-         [:label {:for "search-courses"} "Course Search"]
+         [:label {:for "search-courses"} (str "Course Search (" @course-count ")")]
          [:input.u-full-width
           {:id "search-courses"
            :type "search"

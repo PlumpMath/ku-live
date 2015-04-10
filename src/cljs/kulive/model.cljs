@@ -62,5 +62,11 @@
  :filtered-courses
  (let [search-input (re-frame/subscribe [:search-input])
        courses (re-frame/subscribe [:courses])]
-   (fn [db]
+   (fn [_]
      (reaction (filter (partial matches-query? @search-input) @courses)))))
+
+(re-frame/register-sub
+ :count-courses-in-search
+ (let [filtered (re-frame/subscribe [:filtered-courses])]
+   (fn [_]
+     (reaction (count @filtered)))))
