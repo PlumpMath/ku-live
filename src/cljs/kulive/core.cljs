@@ -6,7 +6,7 @@
             [goog.events :as events]
             [goog.history.EventType :as EventType]
             [cljsjs.react :as react]
-            [clojure.string :as string])
+            [clojure.string :as str])
   (:require-macros [reagent.ratom  :refer [reaction]])
   (:import goog.History))
 
@@ -21,22 +21,6 @@
  :courses
  (fn [db]
    (reaction (:courses @db))))
-
-#_[{:name "Beginner CSS" :number "CSS101" :time "Mon(2) Wed(2)"
-    :credits "3" :type "Elective" :prof "Prof. A"}
-   {:name "Intermediate CSS" :number "CSS201" :time "Tue(5) Thu(5)"
-    :credits "3" :type "Elective" :prof "Prof. B"}
-   {:name "Advanced Javascript" :number "JS406" :time "Mon(6) Wed(6)"
-    :credits "3" :type "Major" :prof "Prof. C"}
-   {:name "ClojureScript" :number "CLJS303" :time "Fri(1,2)"
-    :credits "3" :type "Major" :prof "Prof. D"}
-   {:name "Clojure" :number "CLJ505" :time "Tue(3,4) Thu(3,4)"
-    :credits "3" :type "Major" :prof "Prof. D"}
-   {:name "How to Train Your Dragon" :number "DR505" :prof "Prof. E"
-    :time "Tue(7) Thu(7)" :credits "3" :type "Elective"}]
-
-#_(def db
-    (clojure.edn/read-string (slurp "resources/db/db2015-1R.edn")))
 
 (def dummy-data {"DISS352-00" {:kr {:professor "이지수", :r false, :number "DISS352-00", :name " 국제법특강I(영강)", :w false, :l true, :classification "전공선택 ", :credit-hours "3(  3)", :schedule ["화(1) 국제관322" "\n목(1) 국제관322"], :x true, :campus "안암", :href "http://infodepot.korea.ac.kr/lecture1/lecsubjectPlanView.jsp?year=2015&term=1R&grad_cd=0136&col_cd=3928&dept_cd=3931&cour_cd=DISS352&cour_cls=00&cour_nm=국제법특강I(영강)"}, :en {:professor nil, :schedule ["Tue(1) 138-322" "\nThu(1) 138-322"], :r false, :number "DISS352-00", :name "SPECIAL TOPICS IN INTERNATIONAL LAW I(English)", :w false, :l true, :classification "Major Elective", :credit-hours "3(  3)", :x true, :href "http://infodepot.korea.ac.kr/lecture1/lecsubjectPlanViewEng.jsp?year=2015&term=1R&grad_cd=0136&col_cd=3928&dept_cd=3931&cour_cd=DISS352&cour_cls=00&cour_nm=SPECIAL TOPICS IN INTERNATIONAL LAW I(English)"}},
                  "EDBA231-02" {:kr {:professor "박철", :r true, :number "EDBA231-02", :name " 마케팅원론", :w false, :l true, :classification "전공필수 ", :credit-hours "3(  3)", :schedule ["월(9) 33-221" "\n목(1-2) 33-325"], :x true, :campus "세종", :href "http://infodepot.korea.ac.kr/lecture1/lecsubjectPlanView.jsp?year=2015&term=1R&grad_cd=0136&col_cd=0293&dept_cd=4633&cour_cd=EDBA231&cour_cls=02&cour_nm=마케팅원론"}, :en {:professor "Cheol Park", :r true, :number "EDBA231-02", :name "PRINCIPLES OF MARKETING", :w false, :l true, :classification "Major Required", :credit-hours "3(  3)", :schedule ["Mon(9) 33-221" "\nThu(1-2) 33-325"], :x true, :href "http://infodepot.korea.ac.kr/lecture1/lecsubjectPlanViewEng.jsp?year=2015&term=1R&grad_cd=0136&col_cd=0293&dept_cd=4633&cour_cd=EDBA231&cour_cls=02&cour_nm=PRINCIPLES OF MARKETING"}},
@@ -76,37 +60,28 @@
                         [:search-input-entered (-> % .-target .-value)])
            :placeholder "Course ID, Title, Professor, etc..."}]]]])))
 
+(defn course-hm->str [[id data]]
+  (str/join " "
+            [(get-in data [:kr :name])
+             (get-in data [:kr :number])
+             (get-in data [:kr :professor])
+             (apply str (get-in data [:kr :schedule]))
+             (get-in data [:kr :credit-hours])
+             (get-in data [:kr :classification])]))
+
 (defn matches-query?
   [search-input course]
-  (let [matches-input? (fn [key]
-                         (or (re-find
-                              (re-pattern (string/lower-case search-input))
-                              (string/lower-case (apply str (val course))))
-                             (re-find
-                              (re-pattern (string/lower-case
-                                           (apply str (butlast search-input))))
-                              (string/lower-case (apply str (val course))))
-                             ))]
-    (if (= "" search-input)
-      true
-      (or (matches-input? :name)
-          (matches-input? :number)
-          (matches-input? :prof)
-          (matches-input? :time)
-          (matches-input? :credits)
-          (matches-input? :type)
-          ))))
+  (let [course-str (str/lower-case (course-hm->str course))
+        search-input (str/lower-case search-input)
+        search-tokenx (str/split search-input #" ")]
+    (every? (fn [search-token]
+              (> (.indexOf course-str search-token) -1))
+            search-tokenx)))
 
 (defn course-component
   "Individual course in search result list"
   [course]
-  [:li [:a (str
-            (get-in (val course) [:kr :name])
-            (get-in (val course) [:kr :number])
-            (get-in (val course) [:kr :professor])
-            (apply str (get-in (val course) [:kr :schedule]))
-            (get-in (val course) [:kr :credit-hours])
-            (get-in (val course) [:kr :classification]))]])
+  [:li [:a (course-hm->str course)]])
 
 (defn courses-component
   []
@@ -175,7 +150,7 @@
                                          :margin-bottom "5%"}}
      [:h2 "KU Live"]
      [search-component]
-     ;; [courses-table-component]
+     ;;[courses-table-component]
      [courses-component]
      [timetable-component]
      [:div.row [:a {:href "#/about"} "about"]]]]])
