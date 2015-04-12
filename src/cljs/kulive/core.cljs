@@ -10,8 +10,6 @@
   (:require-macros [reagent.ratom  :refer [reaction]])
   (:import goog.History))
 
-<<<<<<< HEAD
-=======
 ;; Subscriptions & handlers -------------------------
 
 (re-frame/register-sub
@@ -44,7 +42,6 @@
  :search-input-entered
  handle-search-input-entered)
 
->>>>>>> commit before rebase
 ;; Views -------------------------
 
 (defn search-component
@@ -74,30 +71,17 @@
       [:div.row
        [:div {:class "u-full-width"}
         [:ul
-<<<<<<< HEAD
          (for [course @courses]
-=======
-         (for [course (take 7 (filter (partial matches-query? @search-input) @courses))]
->>>>>>> commit before rebase
            ^{:key (key course)} [course-component course])]]])))
 
 (defn course-row-component [course]
   [:tr
-<<<<<<< HEAD
-   [:td (get-in (val course) [:c-id :kr :name])]
-   [:td (get-in (val course) [:c-id :kr :number])]
-   [:td (get-in (val course) [:c-id :kr :professor])]
-   [:td (get-in (val course) [:c-id :kr :schedule])]
-   [:td (get-in (val course) [:c-id :kr :credit-hours])]
-   [:td (get-in (val course) [:c-id :kr :classification])]])
-=======
    [:td (str (get-in (val course) [:kr :name]))]
    [:td (str (get-in (val course) [:kr :number]))]
    [:td (str (get-in (val course) [:kr :professor]))]
    [:td (apply str (get-in (val course) [:kr :schedule]))]
    [:td (str (get-in (val course) [:kr :credit-hours]))]
    [:td (str (get-in (val course) [:kr :classification]))]])
->>>>>>> commit before rebase
 
 (defn courses-table-component []
   (let [courses (re-frame/subscribe [:filtered-courses])]
@@ -142,10 +126,6 @@
                                          :margin-bottom "5%"}}
      [:h2 "KU Live"]
      [search-component]
-<<<<<<< HEAD
-     ;;[courses-table-component]
-=======
->>>>>>> commit before rebase
      [courses-component]
      [timetable-component]
      [:div.row [:a {:href "#/about"} "about"]]]]])
