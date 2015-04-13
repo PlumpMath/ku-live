@@ -4,7 +4,7 @@
   :license {:name "Eclipse Public License"
             :url "http://www.eclipse.org/legal/epl-v10.html"}
 
-  :dependencies [[org.clojure/clojure "1.6.0"]
+  :dependencies [[org.clojure/clojure "1.7.0-alpha6"]
                  [ring-server "0.4.0"]
                  [cljsjs/react "0.13.1-0"]
                  [reagent "0.5.0"]
@@ -18,13 +18,16 @@
                  [selmer "0.8.2"]
                  [environ "1.0.0"]
                  [secretary "1.2.3"]
-                 [re-frame "0.2.0"]]
+                 [re-frame "0.2.0"]
+                 [expectations "2.0.9"]]
 
   :plugins [[lein-cljsbuild "1.0.4"]
             [lein-environ "1.0.0"]
             [lein-ancient "0.6.6"]
             [lein-asset-minifier "0.2.2"]
-            [cider/cider-nrepl "0.9.0-SNAPSHOT"]]
+            [lein-expectations "0.0.7"]
+            [cider/cider-nrepl "0.9.0-SNAPSHOT"]
+            [lein-autoexpect "1.4.0"]]
 
   :source-paths ["src/clj"]
 
@@ -35,6 +38,8 @@
   :main kulive.server
 
   :clean-targets ^{:protect false} ["resources/public/js"]
+
+  :test-paths ["test/clj"]
 
   ;; TODO: later before production we should minify averything in one big css
   :minify-assets
