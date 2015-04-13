@@ -23,7 +23,8 @@
   :plugins [[lein-cljsbuild "1.0.4"]
             [lein-environ "1.0.0"]
             [lein-ancient "0.6.6"]
-            [lein-asset-minifier "0.2.2"]]
+            [lein-asset-minifier "0.2.2"]
+            [cider/cider-nrepl "0.9.0-SNAPSHOT"]]
 
   :source-paths ["src/clj"]
 
