@@ -35,7 +35,8 @@
  :initialise-db
  (fn [_ _]
    {:courses dummy-data
-    :search-input ""}))
+    :search-input ""
+    :my-courses []}))
 
 (defn handle-search-input-entered
   [app-state [_ search-input]]
@@ -44,6 +45,23 @@
 (re-frame/register-handler
  :search-input-entered
  handle-search-input-entered)
+
+(defn handle-course-search-entered
+  [app-state _]
+  (let [displayed-courses (re-frame/subscribe [:courses-to-display])
+        search-elem (.getElementById js/document "search-courses")]
+    (if (and (= 1 (count @displayed-courses))
+             (not (get (set (get app-state :my-courses))
+                       (ffirst @displayed-courses))))
+      (do (set! (.-value search-elem) "")
+          (-> app-state
+              (update-in [:my-courses] conj (ffirst @displayed-courses))
+              (assoc-in [:search-input] "")))
+      app-state)))
+
+(re-frame/register-handler
+ :course-search-entered
+ handle-course-search-entered)
 
 ;; Subscribers (this will get data based on inner database)
 
@@ -57,16 +75,54 @@
  (fn [db]
    (reaction (:courses @db))))
 
+(re-frame/register-sub
+ :my-courses
+ (fn [db]
+   (reaction (:my-courses @db))))
+
+(re-frame/register-sub
+ :not-my-courses
+ (let [courses (re-frame/subscribe [:courses])
+       my-courses (re-frame/subscribe [:my-courses])]
+   (fn [db]
+     (reaction (filterv (fn [[id course-data]]
+                          (not (get (set @my-courses) id)))
+                        @courses)))))
+
 ;; TODO: is it right pattern?
 (re-frame/register-sub
  :filtered-courses
  (let [search-input (re-frame/subscribe [:search-input])
-       courses (re-frame/subscribe [:courses])]
+       not-my-courses (re-frame/subscribe [:not-my-courses])]
    (fn [_]
-     (reaction (filter (partial matches-query? @search-input) @courses)))))
+     (reaction
+      (let [filtered-courses
+            (filterv (partial matches-query? @search-input) @not-my-courses)]
+        (if (and (empty? filtered-courses)
+                 (> (count @search-input) 0))
+          (filterv
+           (partial matches-query? (apply str (butlast @search-input)))
+           @not-my-courses)
+          filtered-courses))))))
+
+(re-frame/register-sub
+ :courses-to-display
+ (let [filtered-courses (re-frame/subscribe [:filtered-courses])]
+   (fn [_]
+     (reaction (take 5 @filtered-courses)))))
 
 (re-frame/register-sub
  :count-courses-in-search
  (let [filtered (re-frame/subscribe [:filtered-courses])]
    (fn [_]
      (reaction (count @filtered)))))
+
+;; #_(defn parse-time [vec]
+;;     )
+
+;; (let [my-courses (re-frame/subscribe [:my-courses])
+;;       courses (re-frame/subscribe [:courses])]
+;;   (println
+;;    (for [course @my-courses]
+;;      (get-in @courses [course :en :schedule]))))
+
