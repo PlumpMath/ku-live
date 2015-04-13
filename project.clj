@@ -25,7 +25,7 @@
             [lein-ancient "0.6.6"]
             [lein-asset-minifier "0.2.2"]]
 
-  :source-paths ["src/clj" "src/cljs"]
+  :source-paths ["src/clj"]
 
   :min-lein-version "2.5.0"
 
@@ -43,16 +43,13 @@
     "resources/public/css/site.min.css" "resources/public/css/site.css"}}
 
   :cljsbuild {:builds {:app {:source-paths ["src/cljs"]
-                             :compiler {:output-to     "resources/public/js/app.js"
-                                        :output-dir    "resources/public/js/out"
-                                        :asset-path   "js/out"
+                             :compiler {:output-to "resources/public/js/app.js"
+                                        :output-dir "resources/public/js/out"
+                                        :asset-path "js/out"
                                         :optimizations :none
-                                        :pretty-print  true}}}}
+                                        :pretty-print true}}}}
 
-  :profiles {:dev {:repl-options {:init-ns kulive.repl
-                                  :nrepl-middleware [cemerick.piggieback/wrap-cljs-repl]}
-
-                   :dependencies [[ring-mock "0.1.5"]
+  :profiles {:dev {:dependencies [[ring-mock "0.1.5"]
                                   [ring/ring-devel "1.3.2"]
                                   [leiningen "2.5.1"]
                                   [figwheel "0.2.6"]
@@ -74,10 +71,8 @@
                    :env {:dev? true}
 
                    :cljsbuild {:builds {:app {:source-paths ["env/dev/cljs"]
-                                              :compiler {   :main "kulive.dev"
-                                                         :source-map true}}
-                                        }
-                               }}
+                                              :compiler {:main "kulive.dev"
+                                                         :source-map true}}}}}
 
              :uberjar {:hooks [leiningen.cljsbuild minify-assets.plugin/hooks]
                        :env {:production true}
