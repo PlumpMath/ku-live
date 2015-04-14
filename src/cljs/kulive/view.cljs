@@ -43,15 +43,6 @@
            ^{:key (key course)} [course-component course])]]])))
 
 (defn course-row-component [course]
-<<<<<<< HEAD
-  [:tr
-   [:td (get-in (val course) [:kr :name])]
-   [:td (get-in (val course) [:kr :number])]
-   [:td (get-in (val course) [:kr :professor])]
-   [:td (str/join " " (get-in (val course) [:en :schedule]))]
-   [:td (get-in (val course) [:kr :credit-hours])]
-   [:td (get-in (val course) [:kr :classification])]])
-=======
   (let [search-tokens (re-frame/subscribe [:search-tokens])]
     (fn []
       [:tr
@@ -61,7 +52,6 @@
        [:td (str/join " " (get-in (val course) [:kr :schedule]))]
        [:td (str/replace (get-in (val course) [:kr :credit-hours]) " " "")]
        [:td (get-in (val course) [:kr :classification])]])))
->>>>>>> Stuff
 
 (defn courses-table-component []
   (let [courses-to-display (re-frame/subscribe [:courses-to-display])]
