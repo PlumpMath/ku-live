@@ -87,16 +87,17 @@
 
 (defn home-page []
   [:div.container
-   [:div.row
-    [:div {:course "nine column" :style {:margin-top "2%"
-                                         :margin-bottom "5%"}}
-     [:h1 "KU Live"]
-     [search-component]
-     ;; [courses-component]
-     [courses-table-component]
-     [my-courses-component]
-     [timetable-component]
-     [:div.row [:a {:href "#/about"} "about"]]]]])
+   [:div {:style {:margin-top "4%" :margin-bottom "5%"}}
+    [:h2 "KU Live"]
+    [search-component]
+    ;; [courses-component]
+    [courses-table-component]
+    [my-courses-component]
+    [timetable-component]
+    [:div.row [:a {:href "#/about"} "about"]]]])
 
 (defn about-page []
-  [:div [:a {:href "#/"} "home"]])
+  [:div.container {:style {:margin-top "4%"}}
+   [:h2 "About"]
+   [:p "Built with Clojure by Sooheon Kim"]
+   [:a {:href "#/"} "home"]])
