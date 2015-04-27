@@ -28,21 +28,8 @@
                            nil)
            :placeholder "Course ID, Title, Professor, etc..."}]]]])))
 
-(defn course-component
-  "Individual course in search result list"
-  [course]
-  [:li [:a (kulive.model/course-hm->str course)]])
-
-(defn courses-component []
-  (let [courses (re-frame/subscribe [:courses-to-display])]
-    (fn []
-      [:div.row
-       [:div {:class "u-full-width"}
-        [:ul
-         (for [course @courses]
-           ^{:key (key course)} [course-component course])]]])))
-
 (defn course-row-component [course]
+  "Row with course info"
   (let [search-tokens (re-frame/subscribe [:search-tokens])]
     (fn []
       [:tr
@@ -54,6 +41,7 @@
        [:td (get-in (val course) [:kr :classification])]])))
 
 (defn courses-table-component []
+  "Table of course search results"
   (let [courses-to-display (re-frame/subscribe [:courses-to-display])]
     (fn []
       [:div [:table.u-full-width
@@ -73,6 +61,7 @@
                [:p.test "No classes to show"])]])))
 
 (defn my-courses-component []
+  "List of my selected courses"
   (let [my-courses (re-frame/subscribe [:my-courses])
         credit-sum (re-frame/subscribe [:sum-credits-in-my-courses])]
     (fn []
@@ -90,7 +79,6 @@
    [:div {:style {:margin-top "4%" :margin-bottom "5%"}}
     [:h2 "KU Live"]
     [search-component]
-    ;; [courses-component]
     [courses-table-component]
     [my-courses-component]
     [timetable-component]
