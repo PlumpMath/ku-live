@@ -73,12 +73,17 @@
                [:p.test "No classes to show"])]])))
 
 (defn my-courses-component []
-  (let [my-courses (re-frame/subscribe [:my-courses])]
+  (let [my-courses (re-frame/subscribe [:my-courses])
+        credit-sum (re-frame/subscribe [:sum-credits-in-my-courses])]
     (fn []
-      (if (empty? @my-courses)
-        [:p "No courses yet"]
-        [:ul (for [course @my-courses]
-               ^{:key (hash (first course))} [:li (str/join " " course)])]))))
+      [:div
+       [:h4 "My Courses"]
+       (if (empty? @my-courses)
+         [:p "No courses yet"]
+         [:div
+          [:label "Total credits: " (str @credit-sum)]
+          [:ul (for [course @my-courses]
+                 ^{:key (hash (first course))} [:li (str/join " " course)])]])])))
 
 (defn home-page []
   [:div.container
@@ -89,7 +94,6 @@
      [search-component]
      ;; [courses-component]
      [courses-table-component]
-     [:h4 "My Courses"]
      [my-courses-component]
      [timetable-component]
      [:div.row [:a {:href "#/about"} "about"]]]]])

@@ -54,7 +54,9 @@
                          conj
                          [(ffirst @displayed-courses)
                           (get-in (val (first @displayed-courses))
-                                  [:kr :name])])
+                                  [:kr :name])
+                          (first (get-in (val (first @displayed-courses))
+                                         [:kr :credit-hours]))])
               (assoc-in [:search-input] "")))
       app-state)))
 
@@ -113,7 +115,7 @@
  :courses-to-display
  (let [filtered-courses (re-frame/subscribe [:filtered-courses])]
    (fn [_]
-     (reaction (take 5 @filtered-courses)))))
+     (reaction (take 6 @filtered-courses)))))
 
 (re-frame/register-sub
  :count-courses-in-search
@@ -121,11 +123,14 @@
    (fn [_]
      (reaction (count @filtered)))))
 
-#_(defn parse-time [vec]
-    )
+(re-frame/register-sub
+ :sum-credits-in-my-courses
+ (let [my-courses (re-frame/subscribe [:my-courses])]
+   (fn [_]
+     (reaction (reduce + (mapv #(js/parseInt (nth % 2)) @my-courses))))))
 
-(let [my-courses (re-frame/subscribe [:my-courses])
-      courses (re-frame/subscribe [:courses])]
-  (println
-   (for [course @my-courses]
-     (get-in @courses [course :en :schedule]))))
+(defn parse-time [vec]
+  (let [my-courses (re-frame/subscribe [:my-courses])
+        courses (re-frame/subscribe [:courses])]
+    (for [course @my-courses]
+      (get-in @courses [course :en :schedule]))))
