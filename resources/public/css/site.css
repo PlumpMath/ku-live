@@ -5,3 +5,8 @@
 span.highlight {
   background: yellow;
 }
+
+td {
+  font-size: 95%;
+  padding: 12px 12px;
+}
