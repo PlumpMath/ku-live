@@ -50,7 +50,11 @@
                        (first @displayed-courses))))
       (do (set! (.-value search-elem) "")
           (-> app-state
-              (update-in [:my-courses] conj (ffirst @displayed-courses))
+              (update-in [:my-courses]
+                         conj
+                         [(ffirst @displayed-courses)
+                          (get-in (val (first @displayed-courses))
+                                  [:kr :name])])
               (assoc-in [:search-input] "")))
       app-state)))
 
@@ -86,7 +90,7 @@
        my-courses (re-frame/subscribe [:my-courses])]
    (fn [db]
      (reaction (filterv (fn [[id course-data]]
-                          (not (get (set @my-courses) id)))
+                          (not (get (set (map first @my-courses)) id)))
                         @courses)))))
 
 ;; TODO: is it right pattern?

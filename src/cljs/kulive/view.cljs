@@ -77,7 +77,8 @@
     (fn []
       (if (empty? @my-courses)
         [:p "No courses yet"]
-        [:p (str/join " " @my-courses)]))))
+        [:ul (for [course @my-courses]
+               ^{:key (hash (first course))} [:li (str/join " " course)])]))))
 
 (defn home-page []
   [:div.container
