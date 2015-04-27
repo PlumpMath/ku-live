@@ -10,32 +10,37 @@
   []
   (let [search-input (re-frame/subscribe [:search-input])
         course-count (re-frame/subscribe [:count-courses-in-search])
-        displayed-courses (re-frame/subscribe [:courses-to-display])]
+        displayed-courses (re-frame/subscribe [:courses-to-display])
+        add-course #(do (re-frame/dispatch [:course-search-entered])
+                        (.preventDefault %))]
     (fn []
-      [:form {:style {:margin-bottom "1rem"}}
-       [:label {:for "search-courses"} (str "Course Search (" @course-count ")")]
+      [:form {:style {:margin-bottom "0rem"}}
+       [:label
+        (str "강의 검색 (" @course-count ")")]
        [:input
-        {:id "search-courses"
-         :type "search"
-         :style {:width "50%"}
+        {:type "text"
+         :id "search-courses"
+         :style {:width "42%"
+                 :margin-bottom "1rem"}
          :autoComplete "off"
          :on-change #(re-frame/dispatch
                       [:search-input-entered (-> % .-target .-value)])
          :on-key-down #(if (= (.-which %) 13)
-                         (do (re-frame/dispatch
-                              [:course-search-entered])
-                             (.preventDefault %))
+                         add-course
                          nil)
-         :placeholder "Course ID, Title, Professor, etc..."}]
+         :placeholder "ex) 국제관 화(5) 전공선택"}]
        (if (= 1 (count @displayed-courses))
          [:button.button-primary
-          {:style {:margin-left ".8rem" :margin-botton "15px"}} "Add course"])])))
+          {:style {:margin-left ".8rem" :margin-bottom "1rem"}
+           :on-click add-course}
+          "Add course"])])))
 
 (defn course-row-component [course]
   "Row with course info"
-  (let [search-tokens (re-frame/subscribe [:search-tokens])]
+  (let [courses-to-display (re-frame/subscribe [:courses-to-display])]
     (fn []
-      [:tr
+      [:tr (if (= 1 (count @courses-to-display))
+             {:style {:background "#f4faff"}})
        [:td (get-in (val course) [:kr :name])]
        [:td (get-in (val course) [:kr :number])]
        [:td (get-in (val course) [:kr :professor])]
@@ -47,21 +52,30 @@
   "Table of course search results"
   (let [courses-to-display (re-frame/subscribe [:courses-to-display])]
     (fn []
-      [:div [:table.u-full-width
-             [:thead [:tr
-                      [:th "Name"]
-                      [:th "ID"]
-                      [:th "Professor"]
-                      [:th "Schedule"]
-                      [:th "Credits"]
-                      [:th "Class"]]]
-             [:tbody (if (= 1 (count @courses-to-display))
-                       {:style {:background "#f4faff"}})
-              (for [course @courses-to-display]
-                ^{:key (get-in (val course) [:kr :number])}
-                [course-row-component course])]
-             (if (= 0 (count @courses-to-display))
-               [:p.test "No classes to show"])]])))
+      [:div {:style {:height "221px"
+                     :width "92%"
+                     :overflow-y "auto"
+                     :margin-bottom "2em"}}
+       [:table.u-full-width [:thead
+                             [:tr
+                              [:th "과목명"]
+                              [:th "ID"]
+                              [:th "담당교수"]
+                              [:th "강의시간/실"]
+                              [:th "학점(시간)"]
+                              [:th "이수구분"]]]
+        [:tbody
+         (for [course @courses-to-display]
+           ^{:key (get-in (val course) [:kr :number])}
+           [course-row-component course])]
+        (if (= 0 (count @courses-to-display))
+          [:p.test "No classes to show"])]])))
+
+(defn my-course-component [course]
+  [:div
+   [:li {:style {:display "inline-block"
+                 :margin-right "1.5rem"}} (str/join " " course)]
+   [:a "Drop"]])
 
 (defn my-courses-component []
   "List of my selected courses"
@@ -72,23 +86,24 @@
        [:div
         [:h4 {:style {:display "inline-block"
                       :margin-right "2rem"}} "My Courses"]
-        [:label {:style {:display "inline-block"}}
-         "Total credits: " (str @credit-sum)]]
+        [:label {:style {:display "inline-block"
+                         :margin-right "1.5rem"}}
+         "Total credits: " (str @credit-sum)]
+        (if (not (empty? @my-courses)) [:a "Drop All"])]
        (if (empty? @my-courses)
          [:p "No courses yet"]
          [:div
           [:ul (for [course @my-courses]
-                 ^{:key (hash (first course))} [:li (str/join " " course)])]])])))
+                 ^{:key (hash (first course))} [my-course-component course])]])])))
 
 (defn home-page []
   [:div.container
-   [:div {:style {:margin-top "4%" :margin-bottom "5%"}}
-    [:h2 "KU_LIVE"]
-    [search-component]
-    [courses-table-component]
-    [my-courses-component]
-    [timetable-component]
-    [:div.row [:a {:href "#/about"} "about"]]]])
+   [:h3 "KU_LIVE"]
+   [search-component]
+   [courses-table-component]
+   [my-courses-component]
+   [timetable-component]
+   [:div.row [:a {:href "#/about"} "about"]]])
 
 (defn about-page []
   [:div.container {:style {:margin-top "4%"}}

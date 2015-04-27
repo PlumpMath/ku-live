@@ -12,9 +12,15 @@
             [(get-in data [:kr :name])
              (get-in data [:kr :number])
              (get-in data [:kr :professor])
-             (apply str (get-in data [:en :schedule]))
+             (apply str (get-in data [:kr :schedule]))
              (get-in data [:kr :credit-hours])
-             (get-in data [:kr :classification])]))
+             (get-in data [:kr :classification])
+             (get-in data [:en :name])
+             (get-in data [:en :number])
+             (get-in data [:en :professor])
+             (apply str (get-in data [:kr :schedule]))
+             (get-in data [:en :credit-hours])
+             (get-in data [:en :classification])]))
 
 (defn matches-query?
   [search-input course]
@@ -115,7 +121,7 @@
  :courses-to-display
  (let [filtered-courses (re-frame/subscribe [:filtered-courses])]
    (fn [_]
-     (reaction (take 6 @filtered-courses)))))
+     (reaction (take 30 @filtered-courses)))))
 
 (re-frame/register-sub
  :count-courses-in-search
