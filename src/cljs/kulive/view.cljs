@@ -9,24 +9,27 @@
 (defn search-component
   []
   (let [search-input (re-frame/subscribe [:search-input])
-        course-count (re-frame/subscribe [:count-courses-in-search])]
+        course-count (re-frame/subscribe [:count-courses-in-search])
+        displayed-courses (re-frame/subscribe [:courses-to-display])]
     (fn []
       [:form {:style {:margin-bottom "1rem"}}
-       [:div.row
-        [:div {:class "six columns"}
-         [:label {:for "search-courses"} (str "Course Search (" @course-count ")")]
-         [:input.u-full-width
-          {:id "search-courses"
-           :type "search"
-           :autoComplete "off"
-           :on-change #(re-frame/dispatch
-                        [:search-input-entered (-> % .-target .-value)])
-           :on-key-down #(if (= (.-which %) 13)
-                           (do (re-frame/dispatch
-                                [:course-search-entered])
-                               (.preventDefault %))
-                           nil)
-           :placeholder "Course ID, Title, Professor, etc..."}]]]])))
+       [:label {:for "search-courses"} (str "Course Search (" @course-count ")")]
+       [:input
+        {:id "search-courses"
+         :type "search"
+         :style {:width "50%"}
+         :autoComplete "off"
+         :on-change #(re-frame/dispatch
+                      [:search-input-entered (-> % .-target .-value)])
+         :on-key-down #(if (= (.-which %) 13)
+                         (do (re-frame/dispatch
+                              [:course-search-entered])
+                             (.preventDefault %))
+                         nil)
+         :placeholder "Course ID, Title, Professor, etc..."}]
+       (if (= 1 (count @displayed-courses))
+         [:button.button-primary
+          {:style {:margin-left ".8rem" :margin-botton "15px"}} "Add course"])])))
 
 (defn course-row-component [course]
   "Row with course info"
@@ -53,7 +56,7 @@
                       [:th "Credits"]
                       [:th "Class"]]]
              [:tbody (if (= 1 (count @courses-to-display))
-                       {:style {:background "#f5f6f0"}})
+                       {:style {:background "#f4faff"}})
               (for [course @courses-to-display]
                 ^{:key (get-in (val course) [:kr :number])}
                 [course-row-component course])]
@@ -66,18 +69,21 @@
         credit-sum (re-frame/subscribe [:sum-credits-in-my-courses])]
     (fn []
       [:div
-       [:h4 "My Courses"]
+       [:div
+        [:h4 {:style {:display "inline-block"
+                      :margin-right "2rem"}} "My Courses"]
+        [:label {:style {:display "inline-block"}}
+         "Total credits: " (str @credit-sum)]]
        (if (empty? @my-courses)
          [:p "No courses yet"]
          [:div
-          [:label "Total credits: " (str @credit-sum)]
           [:ul (for [course @my-courses]
                  ^{:key (hash (first course))} [:li (str/join " " course)])]])])))
 
 (defn home-page []
   [:div.container
    [:div {:style {:margin-top "4%" :margin-bottom "5%"}}
-    [:h2 "KU Live"]
+    [:h2 "KU_LIVE"]
     [search-component]
     [courses-table-component]
     [my-courses-component]
