@@ -42,27 +42,28 @@
     (fn []
       [:tr (if (= 1 (count @courses-to-display))
              {:style {:background "#f4faff"}})
-       [:td.col1 (get-in (val course) [:kr :name])]
-       [:td.col2 (get-in (val course) [:kr :number])]
-       [:td.col3 (get-in (val course) [:kr :professor])]
-       [:td.col4 (str/join " " (get-in (val course) [:kr :schedule]))]
-       [:td.col5 (str/replace (get-in (val course) [:kr :credit-hours]) " " "")]
-       [:td.col6 (get-in (val course) [:kr :classification])]])))
+       [:td (get-in (val course) [:kr :name])]
+       [:td (get-in (val course) [:kr :number])]
+       [:td (get-in (val course) [:kr :professor])]
+       [:td (str/join " " (get-in (val course) [:kr :schedule]))]
+       [:td (str/replace (get-in (val course) [:kr :credit-hours]) " " "")]
+       [:td (get-in (val course) [:kr :classification])]])))
 
 (defn courses-table-component []
   "Table of course search results"
   (let [courses-to-display (re-frame/subscribe [:courses-to-display])]
     (fn []
-      [:table.u-full-width {:style {:height "25%"
-                                    :margin-bottom "6rem"}}
-       [:thead.u-full-width
+      [:table {:style {:height "25%"
+                       :width "100%"
+                       :margin-bottom "6rem"}}
+       [:thead.course-table
         [:tr
-         [:th.col1 "과목명"]
-         [:th.col2 "ID"]
-         [:th.col3 "담당교수"]
-         [:th.col4 "강의시간"]
-         [:th.col5 "학점"]
-         [:th.col6 "구분"]]]
+         [:th "과목명"]
+         [:th "ID"]
+         [:th "담당교수"]
+         [:th "강의시간"]
+         [:th "학점"]
+         [:th "구분"]]]
        [:tbody.course-table
         (for [course @courses-to-display]
           ^{:key (get-in (val course) [:kr :number])}
