@@ -1,4 +1,18 @@
+th,
 td {
   font-size: 95%;
-  padding: 12px 12px;
+  padding: 11px 11px;
+}
+
+thead, tbody {
+  display: block;
+}
+
+tbody.course-table {
+  height: 100%;
+  overflow-y: auto;
+}
+
+.col1 {
+  width: 0%;
 }

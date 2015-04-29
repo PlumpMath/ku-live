@@ -26,9 +26,10 @@
          :on-change #(re-frame/dispatch
                       [:search-input-entered (-> % .-target .-value)])
          :on-key-down #(if (= (.-which %) 13)
-                         add-course
+                         (do (re-frame/dispatch [:course-search-entered])
+                             (.preventDefault %))
                          nil)
-         :placeholder "ex) 국제관 화(5) 전공선택"}]
+         :placeholder "ex) \"국제관 화(5) major required\""}]
        (if (= 1 (count @displayed-courses))
          [:button.button-primary
           {:style {:margin-left ".8rem" :margin-bottom "1rem"}
@@ -41,35 +42,33 @@
     (fn []
       [:tr (if (= 1 (count @courses-to-display))
              {:style {:background "#f4faff"}})
-       [:td (get-in (val course) [:kr :name])]
-       [:td (get-in (val course) [:kr :number])]
-       [:td (get-in (val course) [:kr :professor])]
-       [:td (str/join " " (get-in (val course) [:kr :schedule]))]
-       [:td (str/replace (get-in (val course) [:kr :credit-hours]) " " "")]
-       [:td (get-in (val course) [:kr :classification])]])))
+       [:td.col1 (get-in (val course) [:kr :name])]
+       [:td.col2 (get-in (val course) [:kr :number])]
+       [:td.col3 (get-in (val course) [:kr :professor])]
+       [:td.col4 (str/join " " (get-in (val course) [:kr :schedule]))]
+       [:td.col5 (str/replace (get-in (val course) [:kr :credit-hours]) " " "")]
+       [:td.col6 (get-in (val course) [:kr :classification])]])))
 
 (defn courses-table-component []
   "Table of course search results"
   (let [courses-to-display (re-frame/subscribe [:courses-to-display])]
     (fn []
-      [:div {:style {:height "221px"
-                     :width "92%"
-                     :overflow-y "auto"
-                     :margin-bottom "2em"}}
-       [:table.u-full-width [:thead
-                             [:tr
-                              [:th "과목명"]
-                              [:th "ID"]
-                              [:th "담당교수"]
-                              [:th "강의시간/실"]
-                              [:th "학점(시간)"]
-                              [:th "이수구분"]]]
-        [:tbody
-         (for [course @courses-to-display]
-           ^{:key (get-in (val course) [:kr :number])}
-           [course-row-component course])]
-        (if (= 0 (count @courses-to-display))
-          [:p.test "No classes to show"])]])))
+      [:table.u-full-width {:style {:height "25%"
+                                    :margin-bottom "6rem"}}
+       [:thead.u-full-width
+        [:tr
+         [:th.col1 "과목명"]
+         [:th.col2 "ID"]
+         [:th.col3 "담당교수"]
+         [:th.col4 "강의시간"]
+         [:th.col5 "학점"]
+         [:th.col6 "구분"]]]
+       [:tbody.course-table
+        (for [course @courses-to-display]
+          ^{:key (get-in (val course) [:kr :number])}
+          [course-row-component course])]
+       (if (= 0 (count @courses-to-display))
+         [:p.test "No classes to show"])])))
 
 (defn my-course-component [course]
   [:div
@@ -98,15 +97,16 @@
 
 (defn home-page []
   [:div.container
-   [:h3 "KU_LIVE"]
-   [search-component]
-   [courses-table-component]
-   [my-courses-component]
-   [timetable-component]
-   [:div.row [:a {:href "#/about"} "about"]]])
+   [:h3 {:style {:margin-bottom "0rem"}} "KULIVE"]
+   [:div {:style {:padding "10px"}}
+    [search-component]
+    [courses-table-component]
+    [my-courses-component]
+    [timetable-component]
+    [:div.row [:a {:href "#/about"} "about"]]]])
 
 (defn about-page []
-  [:div.container {:style {:margin-top "4%"}}
+  [:div.container
    [:h2 "About"]
    [:p "Built with Clojure by Sooheon Kim"]
    [:a {:href "#/"} "home"]])
