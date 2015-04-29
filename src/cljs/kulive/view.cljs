@@ -26,8 +26,7 @@
          :on-change #(re-frame/dispatch
                       [:search-input-entered (-> % .-target .-value)])
          :on-key-down #(if (= (.-which %) 13)
-                         (do (re-frame/dispatch [:course-search-entered])
-                             (.preventDefault %))
+                         add-course
                          nil)
          :placeholder "ex) \"국제관 화(5) major required\""}]
        (if (= 1 (count @displayed-courses))
