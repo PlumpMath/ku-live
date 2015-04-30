@@ -1,11 +1,21 @@
 (ns kulive.timetable
   (:require [re-frame.core :as re-frame]))
 
+
+;; Refactor as macro...
+(defn ttable-row-1
+  []
+  (fn []
+    [:tr
+     [:th 1] [:td]]))
+
 (defn timetable-component
   "take a list of courses, get their times, put into timetable"
-  [course-ids]
-  (let [courses (re-frame/subscribe [:courses])
-        get-time (fn [cid] (get-in courses [cid :en :schedule]))]
+  []
+  (let [processed-courses (re-frame/subscribe [:processed-courses])
+        my-courses (re-frame/subscribe [:my-courses])
+        my-course-ids (map first my-courses)
+        get-schedule (fn [cid] (get-in processed-courses [cid :en :schedule]))]
     (fn []
       [:h5 "Class Schedule"
        [:table.u-full-width
@@ -13,11 +23,14 @@
          [:tr
           [:th] [:th "Mon"] [:th "Tue"] [:th "Wed"] [:th "Thu"] [:th "Fri"]]]
         [:tbody
-         (for [time-slot (range 1 10)]
-           ^{:key (hash time-slot)} [:tr
-                                     [:th time-slot]
-                                     [:td ""]
-                                     [:td ""]
-                                     [:td ""]
-                                     [:td ""]
-                                     [:td ""]])]]])))
+         [ttable-row-1]
+         [:p my-course-ids]
+         ;; [ttable-row-2]
+         ;; [ttable-row-3]
+         ;; [ttable-row-4]
+         ;; [ttable-row-5]
+         ;; [ttable-row-6]
+         ;; [ttable-row-7]
+         ;; [ttable-row-8]
+         ;; [ttable-row-9]
+         ]]])))

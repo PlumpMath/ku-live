@@ -21,14 +21,14 @@
                 :on-change #(re-frame/dispatch
                              [:search-input-entered (-> % .-target .-value)])
                 :on-key-down #(if (= (.-which %) 13)
-                                (do (re-frame/dispatch [:course-search-entered])
+                                (do (re-frame/dispatch [:course-added])
                                     (.preventDefault %))
                                 nil)
                 :placeholder "ex) \"국제관 화(5) major required\""}]
        (if (= 1 (count @displayed-courses))
          [:button.button-primary
           {:style {:margin-left "1rem" :margin-bottom "1rem"}
-           :on-click #(do (re-frame/dispatch [:course-search-entered])
+           :on-click #(do (re-frame/dispatch [:course-added])
                           (.preventDefault %))}
           "Add course"])])))
 
@@ -69,11 +69,9 @@
   [:div
    [:li
     {:style {:display "inline-block"
-             :margin-right "1.5rem"}}
+             :margin-right "1rem"}}
     (str/join " " course)]
-   [:a
-    {:href "javascript:void(0)"}
-    "drop"]])
+   [:a {:href "javascript:void(0)"} "drop"]])
 
 (defn my-courses-component []
   "List of my selected courses"
