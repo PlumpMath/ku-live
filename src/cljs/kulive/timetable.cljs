@@ -12,10 +12,10 @@
 (defn timetable-component
   "take a list of courses, get their times, put into timetable"
   []
-  (let [processed-courses (re-frame/subscribe [:processed-courses])
+  (let [courses (re-frame/subscribe [:courses])
         my-courses (re-frame/subscribe [:my-courses])
         my-course-ids (map first my-courses)
-        get-schedule (fn [cid] (get-in processed-courses [cid :en :schedule]))]
+        get-schedule (fn [cid] (get-in courses [cid :en :schedule]))]
     (fn []
       [:h5 "Class Schedule"
        [:table.u-full-width
@@ -24,7 +24,6 @@
           [:th] [:th "Mon"] [:th "Tue"] [:th "Wed"] [:th "Thu"] [:th "Fri"]]]
         [:tbody
          [ttable-row-1]
-         [:p my-course-ids]
          ;; [ttable-row-2]
          ;; [ttable-row-3]
          ;; [ttable-row-4]

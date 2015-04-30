@@ -1,5 +1,7 @@
 (ns kulive.core
   (:require [kulive.view :refer [home-page about-page]]
+            [kulive.handlers]
+            [kulive.subscribers]
             [reagent.core :as reagent]
             [re-frame.core :as re-frame]
             [reagent.session :as session]

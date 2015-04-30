@@ -29,5 +29,7 @@
                    (update-in [1 :kr] dissoc :schedule)))) ;; dont need doublicate of information in DB
         db))
 
+(def parsed-db (delay (take 100 (process-db @db2015-1R))))
+
 #_(into {} (take 10 (process-db @db2015-1R)))
 #_(take 10 @db2015-1R)

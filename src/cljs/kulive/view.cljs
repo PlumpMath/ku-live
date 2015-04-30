@@ -2,7 +2,6 @@
   (:require [clojure.string :as str]
             [reagent.core :as reagent]
             [re-frame.core :as re-frame]
-            [kulive.model]
             [kulive.timetable :refer [timetable-component]]))
 
 
@@ -49,19 +48,20 @@
   "Table of course search results"
   (let [courses-to-display (re-frame/subscribe [:courses-to-display])]
     (fn []
-      [:table.u-full-width
-       [:thead
-        [:tr
-         [:th "과목명"]
-         [:th "ID"]
-         [:th "담당교수"]
-         [:th "강의시간"]
-         [:th "학점"]
-         [:th "구분"]]]
-       [:tbody
-        (for [course @courses-to-display]
-          ^{:key (get-in (val course) [:kr :number])}
-          [course-row-component course])]
+      [:div
+       [:table.u-full-width
+        [:thead
+         [:tr
+          [:th "과목명"]
+          [:th "ID"]
+          [:th "담당교수"]
+          [:th "강의시간"]
+          [:th "학점"]
+          [:th "구분"]]]
+        [:tbody
+         (for [course @courses-to-display]
+           ^{:key (get-in (val course) [:kr :number])}
+           [course-row-component course])]]
        (if (= 0 (count @courses-to-display))
          [:p.test "No classes to show"])])))
 
