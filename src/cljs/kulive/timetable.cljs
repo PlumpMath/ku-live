@@ -13,7 +13,7 @@
          [:tr
           [:th] [:th "Mon"] [:th "Tue"] [:th "Wed"] [:th "Thu"] [:th "Fri"]]]
         [:tbody
-         (for [time-slot (range 1 8)]
+         (for [time-slot (range 1 10)]
            ^{:key (hash time-slot)} [:tr
                                      [:th time-slot]
                                      [:td ""]

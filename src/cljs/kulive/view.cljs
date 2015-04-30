@@ -8,31 +8,28 @@
 
 (defn search-component
   []
-  (let [search-input (re-frame/subscribe [:search-input])
-        course-count (re-frame/subscribe [:count-courses-in-search])
-        displayed-courses (re-frame/subscribe [:courses-to-display])
-        add-course #(do (re-frame/dispatch [:course-search-entered])
-                        (.preventDefault %))]
+  (let [course-count (re-frame/subscribe [:count-courses-in-search])
+        displayed-courses (re-frame/subscribe [:courses-to-display])]
     (fn []
       [:form {:style {:margin-bottom "0rem"}}
-       [:label
-        (str "강의 검색 (" @course-count ")")]
-       [:input
-        {:type "text"
-         :id "search-courses"
-         :style {:width "42%"
-                 :margin-bottom "1rem"}
-         :autoComplete "off"
-         :on-change #(re-frame/dispatch
-                      [:search-input-entered (-> % .-target .-value)])
-         :on-key-down #(if (= (.-which %) 13)
-                         add-course
-                         nil)
-         :placeholder "ex) \"국제관 화(5) major required\""}]
+       [:label (str "강의 검색 (" @course-count ")")]
+       [:input {:type "search"
+                :id "search-courses"
+                :style {:width "42%"
+                        :margin-bottom "1rem"}
+                :autoComplete "off"
+                :on-change #(re-frame/dispatch
+                             [:search-input-entered (-> % .-target .-value)])
+                :on-key-down #(if (= (.-which %) 13)
+                                (do (re-frame/dispatch [:course-search-entered])
+                                    (.preventDefault %))
+                                nil)
+                :placeholder "ex) \"국제관 화(5) major required\""}]
        (if (= 1 (count @displayed-courses))
          [:button.button-primary
-          {:style {:margin-left ".8rem" :margin-bottom "1rem"}
-           :on-click add-course}
+          {:style {:margin-left "1rem" :margin-bottom "1rem"}
+           :on-click #(do (re-frame/dispatch [:course-search-entered])
+                          (.preventDefault %))}
           "Add course"])])))
 
 (defn course-row-component [course]
@@ -52,10 +49,8 @@
   "Table of course search results"
   (let [courses-to-display (re-frame/subscribe [:courses-to-display])]
     (fn []
-      [:table {:style {:height "25%"
-                       :width "100%"
-                       :margin-bottom "6rem"}}
-       [:thead.course-table
+      [:table.u-full-width
+       [:thead
         [:tr
          [:th "과목명"]
          [:th "ID"]
@@ -63,7 +58,7 @@
          [:th "강의시간"]
          [:th "학점"]
          [:th "구분"]]]
-       [:tbody.course-table
+       [:tbody
         (for [course @courses-to-display]
           ^{:key (get-in (val course) [:kr :number])}
           [course-row-component course])]
@@ -72,9 +67,13 @@
 
 (defn my-course-component [course]
   [:div
-   [:li {:style {:display "inline-block"
-                 :margin-right "1.5rem"}} (str/join " " course)]
-   [:a "Drop"]])
+   [:li
+    {:style {:display "inline-block"
+             :margin-right "1.5rem"}}
+    (str/join " " course)]
+   [:a
+    {:href "javascript:void(0)"}
+    "drop"]])
 
 (defn my-courses-component []
   "List of my selected courses"
@@ -83,22 +82,28 @@
     (fn []
       [:div
        [:div
-        [:h4 {:style {:display "inline-block"
-                      :margin-right "2rem"}} "My Courses"]
-        [:label {:style {:display "inline-block"
-                         :margin-right "1.5rem"}}
+        [:h4
+         {:style {:display "inline-block"
+                  :margin-right "2rem"}}
+         "My Courses"]
+        [:label
+         {:style {:display "inline-block"
+                  :margin-right "1.5rem"}}
          "Total credits: " (str @credit-sum)]
-        (if (not (empty? @my-courses)) [:a "Drop All"])]
+        (if (not (empty? @my-courses))
+          [:a {:href "javascript:void(0)"} "drop all"])]
        (if (empty? @my-courses)
          [:p "No courses yet"]
          [:div
-          [:ul (for [course @my-courses]
-                 ^{:key (hash (first course))} [my-course-component course])]])])))
+          [:ul
+           (for [course @my-courses]
+             ^{:key (hash (first course))}
+             [my-course-component course])]])])))
 
 (defn home-page []
   [:div.container
-   [:h3 {:style {:margin-bottom "0rem"}} "KULIVE"]
-   [:div {:style {:padding "10px"}}
+   [:h3 "KULIVE"]
+   [:div
     [search-component]
     [courses-table-component]
     [my-courses-component]

@@ -17,6 +17,5 @@
 (expect [["Tue" 9 ""] ["Tue" 10 ""]]
         (parse-one-schedule "Tue(9-10)"))
 
-
 (expect [["Tue" 1 "138-322"] ["Thu" 1 "138-322"] ["Thu" 2 "138-322"]]
         (parse-schedule ["Tue(1) 138-322" "\nThu(1-2) 138-322"]))
