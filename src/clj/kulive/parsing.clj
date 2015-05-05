@@ -25,8 +25,7 @@
   (into {}
         (map (fn [class]
                (-> class
-                   (update-in [1 :en :schedule] parse-schedule)
-                   (update-in [1 :kr] dissoc :schedule)))) ;; dont need doublicate of information in DB
+                   (update-in [1 :en :schedule] parse-schedule))))
         db))
 
 (def parsed-db (delay (take 100 (process-db @db2015-1R))))

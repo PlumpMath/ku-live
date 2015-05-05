@@ -12,6 +12,7 @@
   (:require-macros [reagent.ratom  :refer [reaction]])
   (:import goog.History))
 
+
 (defn current-page []
   [:div [(session/get :current-page)]])
 

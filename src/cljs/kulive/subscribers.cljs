@@ -18,7 +18,7 @@
              (get-in data [:en :name])
              (get-in data [:en :number])
              (get-in data [:en :professor])
-             (apply str (get-in data [:kr :schedule]))
+             (apply str (flatten (get-in data [:en :schedule])))
              (str/replace (get-in data [:en :credit-hours]) " " "")
              (get-in data [:en :classification])]))
 
