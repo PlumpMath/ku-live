@@ -42,11 +42,7 @@
           (-> app-state
               (update-in [:my-courses]
                          conj
-                         [(ffirst @displayed-courses)
-                          (get-in (val (first @displayed-courses))
-                                  [:kr :name])
-                          (first (get-in (val (first @displayed-courses))
-                                         [:kr :credit-hours]))])
+                         (ffirst @displayed-courses)) ; course-id
               (assoc-in [:search-input] "")))
       app-state)))
 

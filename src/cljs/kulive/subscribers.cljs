@@ -58,8 +58,8 @@
  (let [courses (re-frame/subscribe [:courses])
        my-courses (re-frame/subscribe [:my-courses])]
    (fn [db]
-     (reaction (filterv (fn [[id course-data]]
-                          (not (get (set (map first @my-courses)) id)))
+     (reaction (filterv (fn [[id _]]
+                          (not (get (set @my-courses) id)))
                         @courses)))))
 
 ;; TODO: is it right pattern?
@@ -95,3 +95,19 @@
  (let [my-courses (re-frame/subscribe [:my-courses])]
    (fn [_]
      (reaction (reduce + (mapv #(js/parseInt (nth % 2)) @my-courses))))))
+
+(re-frame/register-sub
+ :my-schedule
+ (let [my-courses (re-frame/subscribe [:my-courses])
+       courses (re-frame/subscribe [:courses])]
+   (fn [_]
+     (reaction
+      (let [courses (into {} @courses)
+            result (into {} (mapv
+                             (fn [[day period id]] [[day period] id])
+                             (mapcat
+                              (fn [cid]
+                                (get-in courses [cid :en :schedule]))
+                              @my-courses)))]
+        (println result)
+        result)))))
