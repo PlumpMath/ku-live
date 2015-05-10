@@ -103,11 +103,14 @@
    (fn [_]
      (reaction
       (let [courses (into {} @courses)
-            result (into {} (mapv
-                             (fn [[day period id]] [[day period] id])
-                             (mapcat
-                              (fn [cid]
-                                (get-in courses [cid :en :schedule]))
-                              @my-courses)))]
+            result (reduce (fn [acc [day period cid]]
+                             (if (get acc [day period])
+                               (update-in acc [[day period]] conj cid)
+                               (assoc-in acc [[day period]] [cid])))
+                           {}
+                           (mapcat
+                            (fn [cid]
+                              (get-in courses [cid :en :schedule]))
+                            @my-courses))]
         (println result)
         result)))))

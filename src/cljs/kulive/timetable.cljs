@@ -10,7 +10,7 @@
       [:tr [:th time-period]
        (doall (for [day ["Mon" "Tue" "Wed" "Thu" "Fri"]]
                 ^{:key {day time-period}}
-                [:td (get @my-schedule [day time-period])]))])))
+                [:td (str (get @my-schedule [day time-period]))]))])))
 
 (defn timetable-component
   "take a list of courses, get their times, put into timetable"
