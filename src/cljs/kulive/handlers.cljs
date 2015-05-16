@@ -49,3 +49,11 @@
 (re-frame/register-handler
  :course-added
  handle-course-added)
+
+(defn handle-course-dropped
+  [app-state _]
+  (let [my-courses (re-frame/subscribe [:my-courses])]))
+
+(re-frame/register-handler
+ :course-dropped
+ handle-course-dropped)

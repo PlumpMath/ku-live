@@ -9,7 +9,7 @@
 (defn course-hm->str
   [[_ data]]
   (str/join " "
-            [(get-in data [:kr :name])
+            [(str/replace (get-in data [:kr :name]) " " "")
              (get-in data [:kr :number])
              (get-in data [:kr :professor])
              (apply str (get-in data [:kr :schedule]))
@@ -92,9 +92,13 @@
 
 (re-frame/register-sub
  :sum-credits-in-my-courses
- (let [my-courses (re-frame/subscribe [:my-courses])]
+ (let [my-courses (re-frame/subscribe [:my-courses])
+       courses (re-frame/subscribe [:courses])]
    (fn [_]
-     (reaction (reduce + (mapv #(js/parseInt (nth % 2)) @my-courses))))))
+     (reaction
+      (let [courses (into {} @courses)]
+        (reduce + (mapv #(js/parseInt (nth % 2))
+                        @my-courses)))))))
 
 (re-frame/register-sub
  :my-schedule
@@ -112,5 +116,4 @@
                             (fn [cid]
                               (get-in courses [cid :en :schedule]))
                             @my-courses))]
-        (println result)
         result)))))

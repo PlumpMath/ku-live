@@ -6,7 +6,6 @@
   [time-period]
   (let [my-schedule (re-frame/subscribe [:my-schedule])]
     (fn []
-      (println "hello")
       [:tr [:th time-period]
        (doall (for [day ["Mon" "Tue" "Wed" "Thu" "Fri"]]
                 ^{:key {day time-period}}

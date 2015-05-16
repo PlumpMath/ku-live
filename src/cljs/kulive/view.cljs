@@ -35,12 +35,13 @@
   "Row with course info"
   (let [courses-to-display (re-frame/subscribe [:courses-to-display])]
     (fn []
-      [:tr (if (= 1 (count @courses-to-display))
-             {:style {:background "#f4faff"}})
-       [:td (get-in (val course) [:kr :name])]
+      [:tr {:style {:cursor "pointer"
+                    :background (if (= 1 (count @courses-to-display))
+                                  "#f4faff")}}
+       [:td (apply str (rest (get-in (val course) [:kr :name])))]
        [:td (get-in (val course) [:kr :number])]
        [:td (get-in (val course) [:kr :professor])]
-       [:td (str/join " " (get-in (val course) [:kr :schedule]))]
+       [:td (str/join (get-in (val course) [:kr :schedule]))]
        [:td (str/replace (get-in (val course) [:kr :credit-hours]) " " "")]
        [:td (get-in (val course) [:kr :classification])]])))
 
@@ -66,12 +67,17 @@
          [:p.test "No classes to show"])])))
 
 (defn my-course-component [course]
-  [:div
-   [:li
-    {:style {:display "inline-block"
-             :margin-right "1rem"}}
-    (str/join " " course)]
-   [:a {:href "javascript:void(0)"} "drop"]])
+  (let [courses (into {} @(re-frame/subscribe [:courses]))]
+    (fn []
+      [:div
+       [:li
+        {:style {:display "inline-block"
+                 :margin-right "1rem"}}
+        (str/join " - " [course
+                         (apply str (rest ; remove first space
+                                     (get-in (courses course) [:kr :name])))
+                         (get-in (courses course) [:kr :professor])])]
+       [:a {:href "javascript:void(0)"} "drop"]])))
 
 (defn my-courses-component []
   "List of my selected courses"
