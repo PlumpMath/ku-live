@@ -96,9 +96,9 @@
        courses (re-frame/subscribe [:courses])]
    (fn [_]
      (reaction
-      (let [courses (into {} @courses)]
-        (reduce + (mapv #(js/parseInt (nth % 2))
-                        @my-courses)))))))
+      (reduce + (mapv #(js/parseInt (first (get-in (val %) [:en :credit-hours])))
+                      ;; select @my-courses maps from @courses
+                      (select-keys (into {} @courses) @my-courses)))))))
 
 (re-frame/register-sub
  :my-schedule
