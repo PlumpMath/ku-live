@@ -66,9 +66,9 @@
          [:p.test "No classes to show"])])))
 
 (defn drop-course [course]
-  [:a {:href "javascript:void(0)"
+  [:a {:href "#"
        :on-click #(do
-                    ;; (re-frame/dispatch [:course-dropped course])
+                    (re-frame/dispatch [:course-dropped course])
                     (.preventDefault %))}
    "drop"])
 
@@ -86,8 +86,8 @@
                          (get-in (courses course) [:kr :professor])])]
        [drop-course course]])))
 
-(defn drop-all-courses
-  [:a {:href "javascript:void(0)"
+(defn drop-all-courses []
+  [:a {:href "#"
        :on-click #(do (re-frame/dispatch [:drop-all-courses])
                       (.preventDefault %))}
    "drop all"])
@@ -108,7 +108,7 @@
                   :margin-right "1.5rem"}}
          "Total credits: " (str @credit-sum)]
         (if (not (empty? @my-courses))
-          [:a {:href "javascript:void(0)"} "drop all"])]
+          [drop-all-courses])]
        (if (empty? @my-courses)
          [:p "No courses yet"]
          [:div

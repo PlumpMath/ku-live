@@ -50,19 +50,18 @@
  :course-added
  handle-course-added)
 
-;; (defn handle-course-dropped
-;;   [app-state [_ course]]
-;;   (let [my-courses (re-frame/subscribe [:my-courses])]
-;;     (remove #(= % course) @my-courses)))
+(defn handle-course-dropped
+  [app-state [_ course]]
+  (update-in app-state [:my-courses]
+             (partial remove #(= % course))))
 
-;; (re-frame/register-handler
-;;  :course-dropped
-;;  handle-course-dropped)
+(re-frame/register-handler
+ :course-dropped
+ handle-course-dropped)
 
 (defn handle-drop-all-courses
   [app-state _]
-  (let [my-courses (re-frame/subscribe [:my-courses])]
-    (reset! @my-courses [])))
+  (assoc-in app-state [:my-courses] []))
 
 (re-frame/register-handler
  :drop-all-courses
