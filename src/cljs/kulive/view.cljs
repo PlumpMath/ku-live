@@ -70,10 +70,15 @@
 
 (defn drop-course [course]
   [:a {:href "#"
-       :on-click #(do
-                    (re-frame/dispatch [:course-dropped course])
-                    (.preventDefault %))}
+       :on-click #(do (re-frame/dispatch [:course-dropped course])
+                      (.preventDefault %))}
    "drop"])
+
+(defn drop-all-courses []
+  [:a {:href "#"
+       :on-click #(do (re-frame/dispatch [:drop-all-courses])
+                      (.preventDefault %))}
+   "drop all"])
 
 (defn my-course-component [course]
   (let [courses (into {} @(re-frame/subscribe [:courses]))]
@@ -88,12 +93,6 @@
                                      (get-in (courses course) [:kr :name])))
                          (get-in (courses course) [:kr :professor])])]
        [drop-course course]])))
-
-(defn drop-all-courses []
-  [:a {:href "#"
-       :on-click #(do (re-frame/dispatch [:drop-all-courses])
-                      (.preventDefault %))}
-   "drop all"])
 
 (defn my-courses-component []
   "List of my selected courses"
