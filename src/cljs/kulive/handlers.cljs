@@ -37,7 +37,7 @@
         search-elem (.getElementById js/document "search-courses")]
     (if (and (= 1 (count @displayed-courses))
              (not (get (set (get app-state :my-courses))
-                       (peek @displayed-courses))))
+                       (first @displayed-courses))))
       (do (set! (.-value search-elem) "")
           (-> app-state
               (update-in [:my-courses]

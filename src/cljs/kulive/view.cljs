@@ -100,7 +100,7 @@
          [:div
           [:ul
            (for [course @my-courses]
-             ^{:key (hash (peek course))}
+             ^{:key (hash (first course))}
              [my-course-component course])]])])))
 
 (defn home-page []
