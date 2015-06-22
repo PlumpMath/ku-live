@@ -65,18 +65,32 @@
        (if (= 0 (count @courses-to-display))
          [:p.test "No classes to show"])])))
 
+(defn drop-course [course]
+  [:a {:href "javascript:void(0)"
+       :on-click #(do
+                    ;; (re-frame/dispatch [:course-dropped course])
+                    (.preventDefault %))}
+   "drop"])
+
 (defn my-course-component [course]
   (let [courses (into {} @(re-frame/subscribe [:courses]))]
     (fn []
       [:div
        [:li
         {:style {:display "inline-block"
-                 :margin-right "1rem"}}
+                 :margin-right "1rem"}
+         :id course}
         (str/join " - " [course
                          (apply str (rest ; remove first space
                                      (get-in (courses course) [:kr :name])))
                          (get-in (courses course) [:kr :professor])])]
-       [:a {:href "javascript:void(0)"} "drop"]])))
+       [drop-course course]])))
+
+(defn drop-all-courses
+  [:a {:href "javascript:void(0)"
+       :on-click #(do (re-frame/dispatch [:drop-all-courses])
+                      (.preventDefault %))}
+   "drop all"])
 
 (defn my-courses-component []
   "List of my selected courses"
