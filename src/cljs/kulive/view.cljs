@@ -1,13 +1,15 @@
 (ns kulive.view
   (:require [clojure.string :as str]
             [re-frame.core :as re-frame]
-            [kulive.timetable :refer [timetable-component]]))
+            [kulive.timetable :refer [timetable-component]])
+  (:require-macros [reagent.ratom :refer [reaction]]))
 
 
 (defn search-component
   []
   (let [course-count (re-frame/subscribe [:count-courses-in-search])
-        displayed-courses (re-frame/subscribe [:courses-to-display])]
+        displayed-courses (re-frame/subscribe [:courses-to-display])
+        display-count (reaction (count @displayed-courses))]
     (fn []
       [:form {:style {:margin-bottom "0rem"}}
        [:label (str "강의 검색 (" @course-count ")")]
@@ -23,7 +25,7 @@
                                     (.preventDefault %))
                                 nil)
                 :placeholder "ex) \"국제관 화(5) major required\""}]
-       (if (= 1 (count @displayed-courses))
+       (if (= 1 @display-count)
          [:button.button-primary
           {:style {:margin-left "1rem" :margin-bottom "1rem"}
            :on-click #(do (re-frame/dispatch [:course-added])
@@ -32,10 +34,11 @@
 
 (defn course-row-component [course]
   "Row with course info"
-  (let [courses-to-display (re-frame/subscribe [:courses-to-display])]
+  (let [courses-to-display (re-frame/subscribe [:courses-to-display])
+        display-count (reaction (count @courses-to-display))]
     (fn []
       [:tr {:style {:cursor "pointer"
-                    :background (if (= 1 (count @courses-to-display))
+                    :background (if (= 1 @display-count)
                                   "#f4faff")}}
        [:td (apply str (rest (get-in (val course) [:kr :name])))]
        [:td (get-in (val course) [:kr :number])]
