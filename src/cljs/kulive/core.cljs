@@ -1,11 +1,15 @@
 (ns kulive.core
   (:require [kulive.view :refer [home-page about-page]]
+            [kulive.handlers]
+            [kulive.subscribers]
             [reagent.core :as reagent]
             [re-frame.core :as re-frame]
             [reagent.session :as session]
             [secretary.core :as secretary :include-macros true]
             [goog.events :as events]
-            [goog.history.EventType :as EventType])
+            [goog.history.EventType :as EventType]
+            [clojure.string :as str])
+  (:require-macros [reagent.ratom  :refer [reaction]])
   (:import goog.History))
 
 
