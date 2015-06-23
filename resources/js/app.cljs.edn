@@ -1,0 +1,2 @@
+{:require  [tenzing-test.app]
+ :init-fns [tenzing-test.app/init]}
