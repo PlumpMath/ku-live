@@ -4,8 +4,8 @@
  :dependencies '[[org.clojure/clojure "1.7.0-RC1"]
                  [adzerk/boot-cljs      "0.0-3308-0" :scope "test"]
                  [adzerk/boot-cljs-repl "0.1.9"      :scope "test"]
-                 [adzerk/boot-reload    "0.2.4"      :scope "test"]
-                 [pandeiro/boot-http    "0.6.1"      :scope "test"]
+                 [adzerk/boot-reload    "0.3.1"      :scope "test"]
+                 [pandeiro/boot-http    "0.6.2"      :scope "test"]
                  [reagent "0.5.0"]
                  [re-frame "0.4.1"]
                  [mathias/boot-sassc  "0.1.1" :scope "test"]])
@@ -44,9 +44,9 @@
   (task-options! cljs {:optimizations :none
                        :unified-mode true
                        :source-map true}
-                 reload {:on-jsload 'tenzing-test.app/init}
-                      sass   {:line-numbers true
-                                     :source-maps  true})
+                 reload {:on-jsload 'kulive.app/init}
+                 sass   {:line-numbers true
+                         :source-maps  true})
   identity)
 
 (deftask dev
