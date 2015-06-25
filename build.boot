@@ -19,9 +19,7 @@
 
 (deftask build []
   (comp (speak)
-
         (cljs)
-
         (sass :output-dir "css")))
 
 (deftask run []
