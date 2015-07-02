@@ -18,7 +18,7 @@
  '[mathias.boot-sassc    :refer [sass]])
 
 (deftask build []
-  (comp (speak)
+  (comp ;; (speak)
         (cljs)
         (sass :output-dir "css")))
 

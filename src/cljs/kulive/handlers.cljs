@@ -4,7 +4,6 @@
             [re-frame.core :as re-frame]
             [kulive.db :as db]))
 
-
 (re-frame/register-handler
  :initialize-db
  (fn [_ _]

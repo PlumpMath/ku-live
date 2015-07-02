@@ -1,6 +1,7 @@
 (ns kulive.views
   (:require [clojure.string :as str]
-            [re-frame.core :as re-frame])
+            [re-frame.core :as re-frame]
+            [kulive.subs])
   (:require-macros [reagent.ratom :refer [reaction]]))
 
 
@@ -22,7 +23,11 @@
 
 (defn course-row [])
 
-(defn courses-table [])
+(defn courses-table []
+  (let [courses (re-frame/subscribe [:courses])]
+    (fn []
+      [:div
+       [:p (str (first @courses))]])))
 
 (defn my-courses []
   (fn []
