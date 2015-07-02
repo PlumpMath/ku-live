@@ -1,7 +1,7 @@
 (set-env!
  :source-paths    #{"sass" "src/cljs"}
  :resource-paths  #{"resources"}
- :dependencies '[[org.clojure/clojure "1.7.0-RC1"]
+ :dependencies '[[org.clojure/clojure "1.7.0"]
                  [adzerk/boot-cljs      "0.0-3308-0" :scope "test"]
                  [adzerk/boot-cljs-repl "0.1.9"      :scope "test"]
                  [adzerk/boot-reload    "0.3.1"      :scope "test"]
