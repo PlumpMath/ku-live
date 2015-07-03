@@ -2382,4 +2382,9 @@
 "FADM402-00" {:kr {:professor "김태연,이지수", :schedule ["월(7-10) 교육관306"], :r true, :number "FADM402-00", :name " 패션포트폴리오제작및현장연구", :w false, :l true, :classification "전공선택 ", :credit-hours "3(  4)", :x true, :campus "안암", :href "http://infodepot.korea.ac.kr/lecture1/lecsubjectPlanView.jsp?year=2015&term=1R&grad_cd=0136&col_cd=0234&dept_cd=4638&cour_cd=FADM402&cour_cls=00&cour_nm=패션포트폴리오제작및현장연구"}, :en {:professor "Tae-Youn KIM,LEE JI SOO", :schedule ["Mon(7-10) 140-306"], :r true, :number "FADM402-00", :name "FASHION PORTFOLIO DEVELOPMENT", :w false, :l true, :classification "Major Elective", :credit-hours "3(  4)", :x true, :href "http://infodepot.korea.ac.kr/lecture1/lecsubjectPlanViewEng.jsp?year=2015&term=1R&grad_cd=0136&col_cd=0234&dept_cd=4638&cour_cd=FADM402&cour_cls=00&cour_nm=FASHION PORTFOLIO DEVELOPMENT"}},
 "LSSS225-05" {:kr {:professor "배상우", :schedule ["월(5-6) "], :r true, :number "LSSS225-05", :name " 하이엔드스포츠I(영강)", :w false, :l true, :classification "전공선택 ", :credit-hours "1(  2)", :x false, :campus "세종", :href "http://infodepot.korea.ac.kr/lecture1/lecsubjectPlanView.jsp?year=2015&term=1R&grad_cd=0136&col_cd=5685&dept_cd=5683&cour_cd=LSSS225&cour_cls=05&cour_nm=하이엔드스포츠I(영강)"}, :en {:professor "Sang Woo Bae", :schedule ["Mon(5-6)"], :r true, :number "LSSS225-05", :name "HIGH-AND SPORTS I(English)", :w false, :l true, :classification "Major Elective", :credit-hours "1(  2)", :x false, :href "http://infodepot.korea.ac.kr/lecture1/lecsubjectPlanViewEng.jsp?year=2015&term=1R&grad_cd=0136&col_cd=5685&dept_cd=5683&cour_cd=LSSS225&cour_cls=05&cour_nm=HIGH-AND SPORTS I(English)"}}}
    :search-input ""
-   :my-courses {}})
+   :my-courses {}
+   :typeahead {:hidden? true
+               :mouse-on-list? false
+               :selected-index 0
+               :selections []
+               :value ""}})
