@@ -4,7 +4,6 @@
             [reagent.core :as reagent]
             [re-frame.core :as re-frame]))
 
-
 (re-frame/register-sub
  :courses
  (fn [db]

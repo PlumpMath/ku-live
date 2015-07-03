@@ -8,7 +8,6 @@
                  [pandeiro/boot-http "0.6.2" :scope "test"]
                  [mathias/boot-sassc "0.1.1" :scope "test"]
                  [reagent "0.5.0"]
-                 [reagent-forms "0.5.1"]
                  [re-frame "0.4.1"]])
 
 (require
