@@ -1,6 +1,5 @@
 (ns kulive.views
-  (:require [clojure.string :as str]
-            [re-frame.core :as rf]
+  (:require [re-frame.core :as rf]
             [kulive.subs]
             [kulive.handlers])
   (:require-macros [reagent.ratom :refer [reaction]]))
@@ -22,13 +21,8 @@
        [:button.button-primary {:style {:margin-left "1rem"} :on-click #()}
         "add course"]])))
 
-(rf/register-sub
- :typeahead-query
- (fn [db]
-   (reaction (:typeahead @db))))
-
 (defn typeahead []
-  (let [typeahead-db (rf/subscribe [:typeahead-query])
+  (let [typeahead-db (rf/subscribe [:typeahead-db])
         data-source (reaction
                      (filter
                       #(-> %
@@ -45,12 +39,12 @@
        [:input {:type "text"
                 :value @value
                 :on-blur #(when-not (reaction (:mouse-on-list? @typeahead-db))
-                            (rf/dispatch [:hide-typeahead])
+                            (rf/dispatch [:set-typeahead-hidden true])
                             (rf/dispatch [:set-typeahead-selected-index 0]))
                 :on-change #(do
                               (rf/dispatch [:set-typeahead-selections @data-source])
                               (rf/dispatch [:set-typeahead-value (value-of %)])
-                              (rf/dispatch [:show-typeahead])
+                              (rf/dispatch [:set-typeahead-hidden false])
                               (rf/dispatch [:set-typeahead-selected-index 0]))
                 :on-key-down #(do
                                 (case (.-which %)
@@ -67,8 +61,8 @@
                                                        (+ @selected-index 1)])))
                                   13 (do (rf/dispatch [:set-typeahead-value
                                                        (nth @selections @selected-index)])
-                                         (rf/dispatch [:hide-typeahead]))
-                                  27 (do (rf/dispatch [:hide-typeahead])
+                                         (rf/dispatch [:set-typeahead-hidden true]))
+                                  27 (do (rf/dispatch [:set-typeahead-hidden true])
                                          (rf/dispatch [:set-typeahead-selected-index 0]))
                                   "default"))}]
        [:ul {:hidden (or (empty? @selections) (@typeahead-hidden?))
@@ -84,7 +78,7 @@
                   :on-mouse-over #(do
                                     (reset! selected-index (js/parseInt (.getAttribute (.-target %) "tabIndex"))))
                   :on-click #(do
-                               (rf/dispatch [:hide-typeahead])
+                               (rf/dispatch [:set-typeahead-hidden true])
                                (rf/dispatch [:set-typeahead-value result]))} result])
           @selections))]])))
 
@@ -112,6 +106,7 @@
    [:div
     ;; [search]
     [typeahead]
-    [courses-table]
-    [my-courses]
-    [timetable]]])
+    ;; [courses-table]
+    ;; [my-courses]
+    ;; [timetable]
+    ]])
