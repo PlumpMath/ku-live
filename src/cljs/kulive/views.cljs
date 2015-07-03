@@ -6,20 +6,36 @@
 
 
 (defn search []
-  (let []
+  (let [courses (re-frame/subscribe [:courses])
+        course-count (reaction (count @courses))]
     (fn []
       [:form {:style {:margin-bottom "0rem"}}
-       [:label "강의 검색"]
-       [:input {:type "search"
-                :id "course-search"
-                :placeholder "ex) '국제관 화(5) 전공필수'"
-                :style {:width "40%" :margin-bottom "1rem"}
-                :autoComplete "off"
-                :on-change #()
-                :on-key-down #()}]
+       [:label "강의 검색 (" @course-count ")"]
+       [:input.form-control {:type "search"
+                             :field :text
+                             :id :course-search
+                             :placeholder "ex) '국제관 화(5) 전공필수'"
+                             :style {:width "40%" :margin-bottom "1rem"}
+                             :on-change #()
+                             :on-key-down #()}]
        [:button.button-primary {:style {:margin-left "1rem"}
                                 :on-click #()}
         "add course"]])))
+
+(defn friend-source [text]
+  (filter
+   #(-> % (.toLowerCase %) (.indexOf text) (> -1))
+   ["Alice" "Alan" "Bob" "Beth" "Jim" "Jane" "Kim" "Rob" "Zoe"]))
+
+(defn typeahead []
+  (fn []
+    [:div {:field :typeahead
+           :id :ta
+           :data-source friend-source
+           :input-class "form-control"
+           :list-class "typeahead-list"
+           :item-class "typeahead-item"
+           :highlight-class "highlighted"}]))
 
 (defn course-row [])
 
@@ -48,6 +64,7 @@
    [:h3 "KULIVE"]
    [:div
     [search]
+    [typeahead]
     [courses-table]
     [my-courses]
     [timetable]]])
