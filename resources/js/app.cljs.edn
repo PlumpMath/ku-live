@@ -1,0 +1,2 @@
+{:require  [kulive.app]
+ :init-fns [kulive.app/init]}

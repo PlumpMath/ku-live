@@ -1,0 +1,6 @@
+{
+  "name": "ku-live",
+  "root": "target",
+  "clean_urls": true,
+  "error_page": "error.html"
+}
