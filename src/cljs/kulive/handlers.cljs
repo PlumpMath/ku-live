@@ -21,8 +21,8 @@
 (rf/register-handler :set-typeahead-selected-index set-typeahead-selected-index)
 
 (defn set-typeahead-selections
-  [db [_ data-source]]
-  (assoc-in db [:typeahead :selections] data-source))
+  [db [_ selections]]
+  (assoc-in db [:typeahead :selections] selections))
 
 (rf/register-handler :set-typeahead-selections set-typeahead-selections)
 

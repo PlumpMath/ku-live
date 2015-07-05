@@ -2387,4 +2387,4 @@
                :mouse-on-list? false
                :selected-index 0
                :selections []
-               :value ""}})
+               :value nil}})
