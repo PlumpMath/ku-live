@@ -23,22 +23,21 @@
 
 (defn typeahead []
   (let [typeahead-db (rf/subscribe [:typeahead-db])
-        data-source (reaction
-                     (filter
-                      #(-> %
-                           (.toLowerCase)
-                           (.indexOf (get-in @typeahead-db [:input]))
-                           (> -1))
-                      ["Alice" "Alan" "Bob" "Beth" "Jim" "Jane" "Kim" "Rob" "Zoe"]))
+        value (reaction (:value @typeahead-db))
+        data-source (reaction (filter #(-> %
+                                           (.toLowerCase %)
+                                           (.indexOf @value)
+                                           (> -1))
+                                      ["Alice" "Alan" "Bob" "Beth" "Jim" "Jane" "Kim" "Rob" "Zoe"]))
         selected-index (reaction (:selected-index @typeahead-db))
         selections (reaction (:selections @typeahead-db))
-        value (reaction (:value @typeahead-db))
-        typeahead-hidden? (reaction (:hidden @typeahead-db))]
+        typeahead-hidden? (reaction (:hidden @typeahead-db))
+        mouse-on-list? (reaction (:mouse-on-list? @typeahead-db))]
     (fn []
       [:div
        [:input {:type "text"
-                :value @value
-                :on-blur #(when-not (reaction (:mouse-on-list? @typeahead-db))
+                :style {:width "70%"}
+                :on-blur #(when-not @mouse-on-list?
                             (rf/dispatch [:set-typeahead-hidden true])
                             (rf/dispatch [:set-typeahead-selected-index 0]))
                 :on-change #(do
@@ -48,24 +47,27 @@
                               (rf/dispatch [:set-typeahead-selected-index 0]))
                 :on-key-down #(do
                                 (case (.-which %)
-                                  38 (do
-                                       (.preventDefault %)
-                                       (if-not (= 0 @selected-index)
-                                         (rf/dispatch [:set-typeahead-selected-index
-                                                       (- @selected-index 1)])))
-                                  40 (do
-                                       (.preventDefault %)
-                                       (if-not
-                                           (= @selected-index (- (count @selections) 1))
-                                         (rf/dispatch [:set-typeahead-selected-index
-                                                       (+ @selected-index 1)])))
-                                  13 (do (rf/dispatch [:set-typeahead-value
-                                                       (nth @selections @selected-index)])
-                                         (rf/dispatch [:set-typeahead-hidden true]))
+                                  ;; Up key
+                                  38 (do (.preventDefault %)
+                                         (if-not (= 0 @selected-index)
+                                           (rf/dispatch [:set-typeahead-selected-index
+                                                         (dec @selected-index)])))
+                                  ;; Down key
+                                  40 (do (.preventDefault %)
+                                         (if-not (= @selected-index
+                                                    (dec (count @selections)))
+                                           (rf/dispatch [:set-typeahead-selected-index
+                                                         (inc @selected-index)])))
+                                  ;; Enter key
+                                  13 (do
+                                       (rf/dispatch [:set-typeahead-value
+                                                     (nth @selections @selected-index)])
+                                       (rf/dispatch [:set-typeahead-hidden true]))
+                                  ;; TODO: unknown key
                                   27 (do (rf/dispatch [:set-typeahead-hidden true])
                                          (rf/dispatch [:set-typeahead-selected-index 0]))
                                   "default"))}]
-       [:ul {:hidden (or (empty? @selections) (@typeahead-hidden?))
+       [:ul {:hidden (or (empty? @selections) @typeahead-hidden?)
              :class "typeahead-list"
              :on-mouse-enter (rf/dispatch [:set-mouse-on-list true])
              :on-mouse-leave (rf/dispatch [:set-mouse-on-list false])}
@@ -76,11 +78,12 @@
                   :key index
                   :class (if (= @selected-index index) "highlighted" "typeahead-item")
                   :on-mouse-over #(do
-                                    (reset! selected-index (js/parseInt (.getAttribute (.-target %) "tabIndex"))))
+                                    (rf/dispatch [:set-typeahead-selected-index
+                                                  (js/parseInt (.getAttribute (.-target %) "tabIndex"))]))
                   :on-click #(do
                                (rf/dispatch [:set-typeahead-hidden true])
-                               (rf/dispatch [:set-typeahead-value result]))} result])
-          @selections))]])))
+                               (rf/dispatch [:set-typeahead-value result]))} result]) @selections))]
+       [:pre (str @data-source)]])))
 
 (defn course-row [])
 
