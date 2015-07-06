@@ -2,7 +2,7 @@
   (:require [re-frame.core :as rf]
             [kulive.subs]
             [kulive.handlers]
-            [kulive.typeahead])
+            [kulive.typeahead :refer [typeahead]])
   (:require-macros [reagent.ratom :refer [reaction]]))
 
 (defn search []

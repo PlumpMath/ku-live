@@ -7,6 +7,8 @@
 
 (defn typeahead []
   (let [typeahead-db (rf/subscribe [:typeahead-db])
+        courses (rf/subscribe [:courses])
+        course-count (reaction (count @courses))
         data-source (fn [text]
                       (filter
                        #(-> (.toLowerCase %) (.indexOf text) (> -1))
@@ -17,41 +19,44 @@
         typeahead-hidden? (reaction (:hidden? @typeahead-db))
         mouse-on-list? (reaction (:mouse-on-list? @typeahead-db))]
     (fn []
-      [:div
-       [:input
-        {:type "text"
-         :style {:width "70%"}
-         :value @value
-         :on-blur #(when-not @mouse-on-list?
-                     (rf/dispatch [:set-typeahead-hidden true])
-                     (rf/dispatch [:set-typeahead-selected-index 0]))
-         :on-change #(do
-                       (rf/dispatch [:set-typeahead-selections (data-source (.toLowerCase (value-of %)))])
-                       (rf/dispatch [:set-typeahead-value (value-of %)])
-                       (rf/dispatch [:set-typeahead-hidden false])
-                       (rf/dispatch [:set-typeahead-selected-index 0]))
-         :on-key-down #(do
-                         (case (.-which %)
-                           ;; Up key
-                           38 (do (.preventDefault %)
-                                  (if-not (= 0 @selected-index)
-                                    (rf/dispatch [:set-typeahead-selected-index
-                                                  (dec @selected-index)])))
-                           ;; Down key
-                           40 (do (.preventDefault %)
-                                  (if-not (= @selected-index
-                                             (dec (count @selections)))
-                                    (rf/dispatch [:set-typeahead-selected-index
-                                                  (inc @selected-index)])))
-                           ;; Enter key
-                           13 (do
-                                (rf/dispatch [:set-typeahead-value
-                                              (nth @selections @selected-index)])
-                                (rf/dispatch [:set-typeahead-hidden true]))
-                           ;; Esc key
-                           27 (do (rf/dispatch [:set-typeahead-hidden true])
-                                  (rf/dispatch [:set-typeahead-selected-index 0]))
-                           "default"))}]
+      [:form
+       [:label "강의 검색 (" @course-count ")"]
+       [:input {:type "search"
+                :placeholder "과목명, 교수, 번호, 학부, 과, 학점..."
+                :style {:width "99%" :margin-bottom "0rem"
+                        :font-size "3rem" :height "6rem"}
+                :value @value
+                :on-blur #(when-not @mouse-on-list?
+                            (rf/dispatch [:set-typeahead-hidden true])
+                            (rf/dispatch [:set-typeahead-selected-index 0]))
+                :on-change #(do
+                              (rf/dispatch [:set-typeahead-selections
+                                            (data-source (.toLowerCase (value-of %)))])
+                              (rf/dispatch [:set-typeahead-value (value-of %)])
+                              (rf/dispatch [:set-typeahead-hidden false])
+                              (rf/dispatch [:set-typeahead-selected-index 0]))
+                :on-key-down #(do
+                                (case (.-which %)
+                                  ;; Up key
+                                  38 (do (.preventDefault %)
+                                         (if-not (= 0 @selected-index)
+                                           (rf/dispatch [:set-typeahead-selected-index
+                                                         (dec @selected-index)])))
+                                  ;; Down key
+                                  40 (do (.preventDefault %)
+                                         (if-not (= @selected-index
+                                                    (dec (count @selections)))
+                                           (rf/dispatch [:set-typeahead-selected-index
+                                                         (inc @selected-index)])))
+                                  ;; Enter key
+                                  13 (do
+                                       (rf/dispatch [:set-typeahead-value
+                                                     (nth @selections @selected-index)])
+                                       (rf/dispatch [:set-typeahead-hidden true]))
+                                  ;; Esc key
+                                  27 (do (rf/dispatch [:set-typeahead-hidden true])
+                                         (rf/dispatch [:set-typeahead-selected-index 0]))
+                                  "default"))}]
        [:ul {:hidden (or (empty? @selections) @typeahead-hidden?)
              :class "typeahead-list"
              :on-mouse-enter (rf/dispatch [:set-mouse-on-list true])
@@ -68,10 +73,13 @@
                   :on-click #(do
                                (rf/dispatch [:set-typeahead-hidden true])
                                (rf/dispatch [:set-typeahead-value result]))} result]) @selections))]
-       [:div                            ; Just for visualizaiton
+
+       [:div {:style {:margin-top "2rem"}} ;; Just for visualizaiton
+        [:p (str "first course: " (first @courses))]
         [:p (str "data source: " (data-source @value))]
-        [:p (str "value: " @value)]
-        [:p (str "typeahead-hidden: " @typeahead-hidden?)]
-        [:p (str "mouse on list: " @mouse-on-list?)]
-        [:p (str "selections: " @selections)]
-        [:p (str "selected index: " @selected-index)]]])))
+        ;; [:p (str "value: " @value)]
+        ;; [:p (str "typeahead-hidden: " @typeahead-hidden?)]
+        ;; [:p (str "mouse on list: " @mouse-on-list?)]
+        ;; [:p (str "selections: " @selections)]
+        ;; [:p (str "selected index: " @selected-index)]
+        ]])))
