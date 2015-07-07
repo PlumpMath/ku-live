@@ -36,7 +36,7 @@
                        ;; https://github.com/martinklepsch/pseudo-names-error
                        ;; hopefully fixed soon
                        :pseudo-names true}
-                      sass   {:output-style "compressed"})
+                 sass {:output-style "compressed"})
   identity)
 
 (deftask development []

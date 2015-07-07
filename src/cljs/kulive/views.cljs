@@ -19,9 +19,24 @@
        [:button.button-primary {:style {:margin-left "1rem"} :on-click #()}
         "add course"]])))
 
-(defn course-row [])
+(defn course-row [course]
+  "Row with course info")
 
-(defn courses-table [])
+(defn courses-table []
+  "Table of course search results"
+  (let [courses (rf/subscribe [:courses])]
+    (fn []
+      [:div [:table.u-full-width
+             [:thead [:tr
+                      [:th "과목명"]
+                      [:th "ID"]
+                      [:th "교수"]
+                      [:th "강의시간"]
+                      [:th "구분"]]]
+             ;; [:tbody (for [course @courses]
+             ;;           ^{:key (get-in (val course) [:kr :number])}
+             ;;           [course-row-component course])]
+             ]])))
 
 (defn my-courses []
   (fn []

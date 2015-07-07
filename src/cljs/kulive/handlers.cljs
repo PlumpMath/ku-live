@@ -14,11 +14,11 @@
 
 (rf/register-handler :set-typeahead-hidden set-typeahead-hidden)
 
-(defn set-typeahead-selected-index
+(defn set-typeahead-index
   [db [_ ind]]
-  (assoc-in db [:typeahead :selected-index] ind))
+  (assoc-in db [:typeahead :index] ind))
 
-(rf/register-handler :set-typeahead-selected-index set-typeahead-selected-index)
+(rf/register-handler :set-typeahead-index set-typeahead-index)
 
 (defn set-typeahead-selections
   [db [_ selections]]
