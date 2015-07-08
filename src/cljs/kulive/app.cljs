@@ -1,10 +1,10 @@
 (ns kulive.app
-  (:require [reagent.core :as reagent]
+  (:require [kulive.handlers]
             [kulive.views :refer [home-page]]
-            [kulive.handlers]
-            [re-frame.core :as re-frame]))
+            [reagent.core :as r]
+            [re-frame.core :as rf]))
 
 (defn init []
-  (re-frame/dispatch-sync [:initialize-db])
-  (reagent/render-component [home-page]
+  (rf/dispatch-sync [:initialize-db])
+  (r/render-component [home-page]
                             (.getElementById js/document "app")))

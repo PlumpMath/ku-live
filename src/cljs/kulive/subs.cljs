@@ -1,7 +1,6 @@
 (ns kulive.subs
   (:require-macros [reagent.ratom :refer [reaction]])
-  (:require [clojure.string :as str]
-            [reagent.core :as reagent]
+  (:require [reagent.core :as r]
             [re-frame.core :as rf]))
 
 (rf/register-sub

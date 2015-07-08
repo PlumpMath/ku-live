@@ -1,7 +1,6 @@
 (ns kulive.handlers
-  (:require [reagent.core :as reagent]
-            [re-frame.core :as rf]
-            [kulive.db :as db]))
+  (:require [kulive.db :as db]
+            [re-frame.core :as rf]))
 
 (rf/register-handler
  :initialize-db
@@ -20,17 +19,17 @@
 
 (rf/register-handler :set-typeahead-index set-typeahead-index)
 
-(defn set-typeahead-selections
+(defn select-typeahead
   [db [_ selections]]
   (assoc-in db [:typeahead :selections] selections))
 
-(rf/register-handler :set-typeahead-selections set-typeahead-selections)
+(rf/register-handler :select-typeahead select-typeahead)
 
-(defn set-typeahead-value
+(defn set-typeahead-val
   [db [_ val]]
   (assoc-in db [:typeahead :value] val))
 
-(rf/register-handler :set-typeahead-value set-typeahead-value)
+(rf/register-handler :set-typeahead-val set-typeahead-val)
 
 (defn set-mouse-on-list
   [db [_ bool]]

@@ -1,8 +1,8 @@
 (ns kulive.typeahead
-  (:require [re-frame.core :as rf]
-            [kulive.utils :refer [value-of]]
+  (:require [kulive.handlers]
             [kulive.subs]
-            [kulive.handlers])
+            [kulive.utils :refer [value-of]]
+            [re-frame.core :as rf])
   (:require-macros [reagent.ratom :refer [reaction]]))
 
 (defn typeahead []
@@ -24,14 +24,14 @@
        [:input
         {:type "search"
          :placeholder "과목명, 교수, 번호, 학부, 과, 학점..."
-         :style {:width "99%" :margin-bottom "0rem" :font-size "3rem" :height "6rem"}
+         :style {:width "100%" :margin-bottom "0rem" :font-size "2.5rem" :height "6rem"}
          :value @value
          :on-blur #(when-not @mouse-on-list?
                      (rf/dispatch [:set-typeahead-hidden true])
                      (rf/dispatch [:set-typeahead-index 0]))
          :on-change #(do
-                       (rf/dispatch [:set-typeahead-value (value-of %)])
-                       (rf/dispatch [:set-typeahead-selections (when-not (= "" (value-of %))
+                       (rf/dispatch [:set-typeahead-val (value-of %)])
+                       (rf/dispatch [:select-typeahead (when-not (= "" (value-of %))
                                                                  (data-source (.toLowerCase (value-of %))))])
                        (rf/dispatch [:set-typeahead-hidden false])
                        (rf/dispatch [:set-typeahead-index 0]))
@@ -48,7 +48,7 @@
                                     (rf/dispatch [:set-typeahead-index (inc @index)])))
                            ;; Enter key
                            13 (do
-                                (rf/dispatch [:set-typeahead-value
+                                (rf/dispatch [:set-typeahead-val
                                               (nth @selections @index)])
                                 (rf/dispatch [:set-typeahead-hidden true]))
                            ;; Esc key
@@ -57,8 +57,9 @@
                            "default"))}]
        [:ul {:hidden (or (empty? @selections) @typeahead-hidden?)
              :class "typeahead-list"
-             :on-mouse-enter (rf/dispatch [:set-mouse-on-list true])
-             :on-mouse-leave (rf/dispatch [:set-mouse-on-list false])}
+             ;; :on-mouse-enter (rf/dispatch [:set-mouse-on-list true])
+             ;; :on-mouse-leave (rf/dispatch [:set-mouse-on-list false])
+             }
         (doall
          (map-indexed
           (fn [i result]
@@ -70,7 +71,8 @@
                                                   (js/parseInt (.getAttribute (.-target %) "tabIndex"))]))
                   :on-click #(do
                                (rf/dispatch [:set-typeahead-hidden true])
-                               (rf/dispatch [:set-typeahead-value result]))} result]) @selections))]
+                               (rf/dispatch [:set-typeahead-val result]))} result])
+          @selections))]
        [:div {:style {:margin-top "2rem"}} ;; Just for visualizaiton
         [:pre (str "first course: " (first @courses))]
         [:pre (str "data source: " (data-source @value))]

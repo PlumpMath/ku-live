@@ -1,8 +1,8 @@
 (ns kulive.views
-  (:require [re-frame.core :as rf]
+  (:require [kulive.handlers]
             [kulive.subs]
-            [kulive.handlers]
-            [kulive.typeahead :refer [typeahead]])
+            [kulive.typeahead :refer [typeahead]]
+            [re-frame.core :as rf])
   (:require-macros [reagent.ratom :refer [reaction]]))
 
 (defn search []
