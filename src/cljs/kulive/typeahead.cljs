@@ -32,7 +32,7 @@
          :on-change #(do
                        (rf/dispatch [:set-typeahead-val (value-of %)])
                        (rf/dispatch [:select-typeahead (when-not (= "" (value-of %))
-                                                                 (data-source (.toLowerCase (value-of %))))])
+                                                         (data-source (.toLowerCase (value-of %))))])
                        (rf/dispatch [:set-typeahead-hidden false])
                        (rf/dispatch [:set-typeahead-index 0]))
          :on-key-down #(do
@@ -47,10 +47,10 @@
                                              (dec (count @selections)))
                                     (rf/dispatch [:set-typeahead-index (inc @index)])))
                            ;; Enter key
-                           13 (do
-                                (rf/dispatch [:set-typeahead-val
-                                              (nth @selections @index)])
-                                (rf/dispatch [:set-typeahead-hidden true]))
+                           13 (do (.preventDefault %)
+                                  (rf/dispatch [:set-typeahead-val
+                                                (nth @selections @index)])
+                                  (rf/dispatch [:set-typeahead-hidden true]))
                            ;; Esc key
                            27 (do (rf/dispatch [:set-typeahead-hidden true])
                                   (rf/dispatch [:set-typeahead-index 0]))

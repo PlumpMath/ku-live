@@ -12,14 +12,15 @@
                  [re-frame "0.4.1"]])
 
 (require
- '[adzerk.boot-cljs      :refer [cljs]]
+ '[adzerk.boot-cljs :refer [cljs]]
  '[adzerk.boot-cljs-repl :refer [cljs-repl start-repl]]
- '[adzerk.boot-reload    :refer [reload]]
- '[pandeiro.boot-http    :refer [serve]]
- '[mathias.boot-sassc    :refer [sass]])
+ '[adzerk.boot-reload :refer [reload]]
+ '[pandeiro.boot-http :refer [serve]]
+ '[mathias.boot-sassc :refer [sass]])
 
 (deftask build []
-  (comp ;; (speak)
+  (comp
+   ;; (speak)
    (cljs)
    (sass :output-dir "css")))
 
@@ -44,8 +45,8 @@
                        :unified-mode true
                        :source-map true}
                  reload {:on-jsload 'kulive.app/init}
-                 sass   {:line-numbers true
-                         :source-maps  true})
+                 sass {:line-numbers true
+                       :source-maps true})
   identity)
 
 (deftask dev
